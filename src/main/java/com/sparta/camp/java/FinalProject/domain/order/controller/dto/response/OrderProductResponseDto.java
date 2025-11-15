@@ -1,10 +1,9 @@
-package com.sparta.camp.java.FinalProject.domain.order.controller.dto;
+package com.sparta.camp.java.FinalProject.domain.order.controller.dto.response;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Getter
 @Builder

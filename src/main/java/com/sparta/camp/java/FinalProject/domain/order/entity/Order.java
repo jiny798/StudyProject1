@@ -61,16 +61,18 @@ public class Order {
     LocalDateTime updatedAt;
 
     @Builder
-    Order(User user, BigDecimal totalPrice, OrderStatus status, String shippingAddress) {
+    Order(User user, BigDecimal totalPrice, OrderStatus status, String shippingAddress, BigDecimal discountedPrice) {
         this.user = user;
         this.totalPrice = totalPrice;
         this.status = status;
         this.shippingAddress = shippingAddress;
+        this.discountedPrice = discountedPrice;
     }
 
-    public void setTotalPrice(BigDecimal totalPrice) {
+    public void setTotalPrice(BigDecimal totalPrice, BigDecimal discountAmount) {
         if (totalPrice.compareTo(BigDecimal.ZERO) >= 0) {
             this.totalPrice = totalPrice;
+            this.discountedPrice = discountAmount;
         }
     }
 }

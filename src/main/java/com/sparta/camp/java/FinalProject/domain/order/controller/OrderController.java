@@ -1,14 +1,19 @@
 package com.sparta.camp.java.FinalProject.domain.order.controller;
 
+import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderDetailResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.OrderRequest;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.OrderCompleteResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCompleteResponse;
 import com.sparta.camp.java.FinalProject.domain.order.service.OrderService;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,13 +23,30 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<OrderCompleteResponse> order(@AuthenticationPrincipal User user, @Valid @RequestBody OrderRequest request) {
-        return ResponseEntity.ok(orderService.order(request, user.getId()));
+    public ApiResponse<OrderCompleteResponse> order(@AuthenticationPrincipal User user, @Valid @RequestBody OrderRequest request) {
+        System.out.println("user.getId() " + user.getId());
+        OrderCompleteResponse response = orderService.order(request, user.getId());
+        return ApiResponse.success(response);
     }
 
     @GetMapping
-    public ResponseEntity<OrderCompleteResponse> getOrders(@AuthenticationPrincipal User user) {
-        return null;
+    public ApiResponse<List<OrderProductResponse>> getOrders(@AuthenticationPrincipal User user) {
+        System.out.println("user.getId() " + user.getId());
+        List<OrderProductResponse> response = orderService.getOrderList(user.getId());
+        return ApiResponse.success(response);
     }
 
+    @GetMapping("/{orderId}")
+    public ApiResponse<OrderDetailResponse> getOrderDetail(@AuthenticationPrincipal User user, @PathVariable("orderId") Long orderId) {
+        System.out.println("user.getId() " + user.getId() + ", orderId: " + orderId);
+        OrderDetailResponse response = orderService.getOrderDetail(user.getId(), orderId);
+        return ApiResponse.success(response);
+    }
+
+    @PostMapping("/{orderId}/cancel")
+    public ApiResponse<OrderCancelResponse> cancelOrder(@AuthenticationPrincipal User user, @PathVariable("orderId") Long orderId) {
+        System.out.println("user.getId() " + user.getId() + ", orderId: " + orderId);
+        OrderCancelResponse response = orderService.cancelOrder(user.getId(), orderId);
+        return ApiResponse.success(response);
+    }
 }

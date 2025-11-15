@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.order.controller.dto;
+package com.sparta.camp.java.FinalProject.domain.order.controller.dto.response;
 
 import com.sparta.camp.java.FinalProject.common.enums.OrderStatus;
 import lombok.AccessLevel;
@@ -20,7 +20,7 @@ public class OrderCancelResponse {
 
     private LocalDateTime cancelledAt;
 
-    private List<OrderProductResponse> cancelledProducts;
+    private List<CancelledProductDto> cancelledProducts;
 
     private String message;
 

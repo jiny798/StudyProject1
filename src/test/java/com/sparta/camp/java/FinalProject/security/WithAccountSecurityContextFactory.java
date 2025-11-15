@@ -41,7 +41,8 @@ public class WithAccountSecurityContextFactory implements WithSecurityContextFac
                 UserCreateRequest request = new UserCreateRequest();
                 request.setName("test" + count);
                 request.setEmail(email);
-                request.setPassword("jiny1234");
+                request.setPassword("password");
+                request.setPhoneNumber("010-1234-5678");
                 userService.signUp(request);
                 userContext = (UserContext) securityUserService.loadUserByUsername(email);
             }

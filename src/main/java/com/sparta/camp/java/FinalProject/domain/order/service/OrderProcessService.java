@@ -41,14 +41,16 @@ public class OrderProcessService {
         BigDecimal originalTotalPrice = calculateTotalPrice(orderroducts);
         BigDecimal finalTotalPrice = originalTotalPrice;
 
+        BigDecimal discountAmount = BigDecimal.ZERO;
         if (userCouponId != null) {
             finalTotalPrice = couponService.applyDiscountAndMarkAsUsed(
                     user.getId(),
                     userCouponId,
                     originalTotalPrice
             );
+            discountAmount = originalTotalPrice.subtract(finalTotalPrice);
         }
-        order.setTotalPrice(finalTotalPrice);
+        order.setTotalPrice(finalTotalPrice, discountAmount);
 
         return order;
     }
