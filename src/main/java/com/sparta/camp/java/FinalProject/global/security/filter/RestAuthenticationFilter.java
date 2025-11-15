@@ -47,7 +47,6 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        System.out.println("로그인 드가자 ");
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             throw new IllegalArgumentException("HTTP method not supported: " + request.getMethod());
         }

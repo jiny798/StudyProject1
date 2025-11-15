@@ -48,7 +48,6 @@ public class SecurityConfig {
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
         SpaCsrfTokenRequestHandler csrfTokenRequestHandler = new SpaCsrfTokenRequestHandler();
-        System.out.println("필터설정 시작 ");
         http
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth ->

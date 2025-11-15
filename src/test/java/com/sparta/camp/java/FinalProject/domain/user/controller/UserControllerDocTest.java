@@ -9,7 +9,6 @@ import com.sparta.camp.java.FinalProject.domain.user.repository.RoleRepository;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRepository;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRoleRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,26 +16,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import java.util.Collections;
+
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -69,6 +67,7 @@ class UserControllerDocTest {
     void clean() {
         userRoleRepository.deleteAll();
         userRepository.deleteAll();
+        roleRepository.deleteAll();
     }
 
     @Test
@@ -122,6 +121,10 @@ class UserControllerDocTest {
         userRepository.saveAndFlush(user);
 
         Role role = roleRepository.findByRoleName("ROLE_USER");
+        if (role == null) {
+            role = Role.builder().roleName("ROLE_USER").build();
+            roleRepository.saveAndFlush(role);
+        }
         UserRole userRole = UserRole.builder()
                 .user(user)
                 .role(role).build();
@@ -146,5 +149,48 @@ class UserControllerDocTest {
                                 fieldWithPath("email").description("이메일"),
                                 fieldWithPath("password").description("패스워드")
                         )));
+    }
+
+    @Test
+    @DisplayName("내 정보 조회")
+    void getMe() throws Exception {
+        // given
+        User user = User.builder()
+                .email("myinfo@test.com")
+                .passwordHash(passwordEncoder.encode("test"))
+                .name("내정보테스터")
+                .phone("010-1111-2222")
+                .build();
+        userRepository.saveAndFlush(user);
+
+        Role role = roleRepository.findByRoleName("ROLE_USER");
+        if (role == null) {
+            role = Role.builder().roleName("ROLE_USER").build();
+            roleRepository.saveAndFlush(role);
+        }
+        UserRole userRole = UserRole.builder()
+                .user(user)
+                .role(role).build();
+        userRoleRepository.saveAndFlush(userRole);
+
+        var authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        var authentication = new UsernamePasswordAuthenticationToken(user, null, authorities);
+
+        // expected
+        mockMvc.perform(get("/api/users/me")
+                        .with(authentication(authentication))
+                        .accept(APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-me",
+                        responseFields(
+                                fieldWithPath("result").description("성공 여부"),
+                                fieldWithPath("error").description("에러 정보 (성공 시 null)"),
+                                fieldWithPath("message.id").description("사용자 고유 ID"),
+                                fieldWithPath("message.name").description("이름"),
+                                fieldWithPath("message.email").description("이메일"),
+                                fieldWithPath("message.createdAt").description("가입일시")
+                        )
+                ));
     }
 }
