@@ -1,0 +1,21 @@
+= 테스트 API
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 1
+:sectlinks:
+
+== 글 단건조회
+
+[%collapsible]
+.요청 (클릭하여 보기)
+====
+include::{snippets}/user-singUp/http-request.adoc[]
+include::{snippets}/user-singUp/request-fields.adoc[]
+====
+[%collapsible]
+.응답 (클릭하여 보기)
+====
+include::{snippets}/user-singUp/http-response.adoc[]
+====
