@@ -22,15 +22,11 @@ public class QCart extends EntityPathBase<Cart> {
 
     public static final QCart cart = new QCart("cart");
 
+    public final ListPath<CartItem, QCartItem> cartItems = this.<CartItem, QCartItem>createList("cartItems", CartItem.class, QCartItem.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
-
-    public final com.sparta.camp.java.FinalProject.domain.product.entity.QProduct product;
-
-    public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
-
-    public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public final com.sparta.camp.java.FinalProject.domain.user.entity.QUser user;
 
@@ -52,7 +48,6 @@ public class QCart extends EntityPathBase<Cart> {
 
     public QCart(Class<? extends Cart> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.product = inits.isInitialized("product") ? new com.sparta.camp.java.FinalProject.domain.product.entity.QProduct(forProperty("product"), inits.get("product")) : null;
         this.user = inits.isInitialized("user") ? new com.sparta.camp.java.FinalProject.domain.user.entity.QUser(forProperty("user")) : null;
     }
 

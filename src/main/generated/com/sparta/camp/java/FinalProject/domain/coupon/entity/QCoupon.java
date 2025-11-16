@@ -33,6 +33,8 @@ public class QCoupon extends EntityPathBase<Coupon> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
+    public final NumberPath<Integer> issuedQuantity = createNumber("issuedQuantity", Integer.class);
+
     public final NumberPath<java.math.BigDecimal> maxDiscountAmount = createNumber("maxDiscountAmount", java.math.BigDecimal.class);
 
     public final NumberPath<java.math.BigDecimal> minOrderAmount = createNumber("minOrderAmount", java.math.BigDecimal.class);

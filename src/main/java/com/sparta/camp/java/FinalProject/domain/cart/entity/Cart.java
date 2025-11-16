@@ -1,16 +1,16 @@
 package com.sparta.camp.java.FinalProject.domain.cart.entity;
 
 
-import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -22,33 +22,19 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Product product;
-
-    private int quantity;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    @UpdateTimestamp
-    LocalDateTime updatedAt;
-
     @Builder
-    public Cart(User user, Product product, int quantity) {
+    public Cart(User user) {
         this.user = user;
-        this.product = product;
-        this.quantity = quantity;
     }
-
-    public void addQuantity(int quantity) {
-        this.quantity += quantity;
-    }
-
 }

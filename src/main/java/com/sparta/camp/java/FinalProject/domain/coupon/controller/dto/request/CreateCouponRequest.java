@@ -3,12 +3,18 @@ package com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.Coupon;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.DiscountType;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.ExpirationType;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreateCouponRequest {
     private String name;
     private String description;

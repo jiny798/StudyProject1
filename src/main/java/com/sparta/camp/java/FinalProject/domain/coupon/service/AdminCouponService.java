@@ -51,6 +51,8 @@ public class AdminCouponService {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_COUPON));
 
+        coupon.validateIssuable();
+
         LocalDateTime expirationDate = calculateExpirationDate(coupon);
 
         UserCoupon userCoupon = UserCoupon.builder()
@@ -60,17 +62,18 @@ public class AdminCouponService {
                 .expirationDate(expirationDate)
                 .build();
 
+        coupon.decreaseQuantity();
+
         userCouponRepository.save(userCoupon);
 
     }
 
     private LocalDateTime calculateExpirationDate(Coupon coupon) {
-        if (ExpirationType.FIXED_PERIOD.equals(coupon.getExpirationType())) {
+        if (ExpirationType.VALID_DAYS_ON_ISSUE.equals(coupon.getExpirationType())) {
             return LocalDateTime.now().plusDays(coupon.getValidDays());
-        } else if (ExpirationType.DATE_RANGE.equals(coupon.getExpirationType())) {
+        } else if (ExpirationType.FIXED_PERIOD.equals(coupon.getExpirationType())) {
             return coupon.getEndDate();
         }
-        throw new IllegalArgumentException("유효하지 않은 쿠폰 만료 타입입니다.");
-
+        throw new ServiceException(ServiceExceptionCode.INVALID_COUPON_EXPIRATION_TYPE);
     }
 }

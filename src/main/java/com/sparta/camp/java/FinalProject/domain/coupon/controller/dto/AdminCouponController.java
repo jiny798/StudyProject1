@@ -25,7 +25,7 @@ public class AdminCouponController {
     }
 
     @DeleteMapping("/{couponId}")
-    public ApiResponse<CouponResponse> delete(@PathVariable Long couponId) {
+    public ApiResponse<CouponResponse> delete(@PathVariable("couponId") Long couponId) {
         adminCouponService.deleteCoupon(couponId);
         return ApiResponse.success();
     }

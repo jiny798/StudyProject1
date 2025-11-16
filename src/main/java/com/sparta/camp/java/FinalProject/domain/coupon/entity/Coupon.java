@@ -1,6 +1,8 @@
 package com.sparta.camp.java.FinalProject.domain.coupon.entity;
 
 import com.google.gson.stream.JsonWriter;
+import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
+import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.DiscountType;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.ExpirationType;
 import jakarta.persistence.*;
@@ -55,6 +57,8 @@ public class Coupon {
 
     private Integer totalQuantity;
 
+    private Integer issuedQuantity;
+
     @Enumerated(EnumType.STRING)
     private CouponStatus status;
 
@@ -91,6 +95,7 @@ public class Coupon {
         this.maxDiscountAmount = maxDiscountAmount;
         this.totalQuantity = totalQuantity;
         this.status = CouponStatus.ACTIVE;
+        this.issuedQuantity = 0;
     }
 
     public void activate() {
@@ -102,13 +107,29 @@ public class Coupon {
     }
 
     public void validateTemplate() {
-        if (this.expirationType == ExpirationType.DATE_RANGE &&
-                (this.startDate == null || this.endDate == null || this.startDate.isAfter(this.endDate))) {
-            throw new IllegalArgumentException("기간 설정이 올바르지 않습니다.");
+        if (expirationType == ExpirationType.FIXED_PERIOD) {
+            if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
+                throw new ServiceException(ServiceExceptionCode.INVALID_COUPON_DATE_RANGE);
+            }
+        } else if (expirationType == ExpirationType.VALID_DAYS_ON_ISSUE) {
+            if (validDays == null || validDays <= 0) {
+                throw new ServiceException(ServiceExceptionCode.INVALID_COUPON_VALID_DAYS);
+            }
         }
+    }
 
-        if (this.expirationType == ExpirationType.FIXED_PERIOD && this.validDays == null) {
-            throw new IllegalArgumentException("쿠폰 유효 일이 설정되지 않았습니다.");
+    public void validateIssuable() {
+        if (this.status != CouponStatus.ACTIVE) {
+            throw new ServiceException(ServiceExceptionCode.COUPON_NOT_ACTIVE);
+        }
+        if (this.totalQuantity != null && this.issuedQuantity >= this.totalQuantity) {
+            throw new ServiceException(ServiceExceptionCode.COUPON_OUT_OF_STOCK);
+        }
+    }
+
+    public void decreaseQuantity() {
+        if (this.totalQuantity != null) {
+            this.issuedQuantity++;
         }
     }
 
