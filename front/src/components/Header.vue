@@ -28,6 +28,7 @@
         </template>
         <template v-else>
           <el-button size="small" @click="router.push('/login')">로그인</el-button>
+          <el-button size="small" @click="router.push('/signup')">회원가입</el-button>
         </template>
       </div>
     </nav>

@@ -14,6 +14,13 @@ export default class UserRepository {
     })
   }
 
+  public signup(request: Login) {
+    return this.httpRepository.post({
+      path: '/api/users',
+      body: request,
+    })
+  }
+
   public getProfile() {
     return this.httpRepository.get<UserProfile>(
       {
