@@ -2,9 +2,9 @@ import { DateTimeFormatter, LocalDateTime } from '@js-joda/core'
 import { Transform } from 'class-transformer'
 
 export default class Product {
+  public id: number | null = null
   public name = ''
   public price: number | null = null
-  public stock: number | null = null
   public categoryId: number | null = null
   public description = ''
   public productImages: string[] = []

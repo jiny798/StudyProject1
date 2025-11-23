@@ -42,9 +42,6 @@ public class Product {
     @Column(nullable = false)
     BigDecimal price;
 
-    @Column(nullable = false)
-    Integer stock;
-
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductImages> productImages = new ArrayList<>();
 
@@ -72,7 +69,6 @@ public class Product {
         this.name = name;
         this.description = description;
         this.price = price;
-        this.stock = stock;
         this.user = user;
         this.productImages = productImages;
     }
@@ -86,14 +82,6 @@ public class Product {
             this.productImages.addAll(productImages);
             this.productImages.forEach(image -> image.setProduct(this));
         }
-    }
-
-    public void reduceStock(Integer quantity) {
-        this.stock -= quantity;
-    }
-
-    public void increaseStock(Integer quantity) {
-        this.stock += quantity;
     }
 
 }

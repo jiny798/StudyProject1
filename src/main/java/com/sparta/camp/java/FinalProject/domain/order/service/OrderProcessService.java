@@ -71,8 +71,8 @@ public class OrderProcessService {
         for (OrderProductRequestDto itemRequest : itemRequests) {
             Product product = productRepository.findById(itemRequest.getProductId()).orElseThrow();
 
-            validateStock(product, itemRequest.getQuantity());
-            product.reduceStock(itemRequest.getQuantity());
+//            validateStock(product, itemRequest.getQuantity());
+//            product.reduceStock(itemRequest.getQuantity());
 
             OrderProduct purchaseProduct = OrderProduct.builder()
                     .product(product)
@@ -88,11 +88,11 @@ public class OrderProcessService {
         return purchaseProducts;
     }
 
-    private void validateStock(Product product, int requestedQuantity) {
-        if (requestedQuantity > product.getStock()) {
-            throw new ServiceException(ServiceExceptionCode.OUT_OF_STOCK_PRODUCT);
-        }
-    }
+//    private void validateStock(Product product, int requestedQuantity) {
+//        if (requestedQuantity > product.getStock()) {
+//            throw new ServiceException(ServiceExceptionCode.OUT_OF_STOCK_PRODUCT);
+//        }
+//    }
 
     private BigDecimal calculateTotalPrice(List<OrderProduct> purchaseProducts) {
         return purchaseProducts.stream()

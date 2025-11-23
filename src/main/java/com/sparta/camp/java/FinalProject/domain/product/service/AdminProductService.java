@@ -32,20 +32,20 @@ import java.util.Map;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class ProductService {
+public class AdminProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ProductOptionRepository productOptionRepository;
 
-    public void createProduct(Long userId, RequestProduct req) {
+    public void createProduct(Long userId, RequestProduct requestProduct) {
         var user = userRepository.findById(userId).orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_USER));
-        var category = categoryRepository.findById(req.getCategoryId()).orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_CATEGORY));
-        Product product = saveProduct(req, category, user);
+        var category = categoryRepository.findById(requestProduct.getCategoryId()).orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_CATEGORY));
+        Product product = saveProduct(requestProduct, category, user);
 
-        if (req.getOptions() != null && !req.getOptions().isEmpty()) {
-            List<ProductOption> options = parseOptions(product, null, req.getOptions());
+        if (requestProduct.getOptions() != null && !requestProduct.getOptions().isEmpty()) {
+            List<ProductOption> options = parseOptions(product, null, requestProduct.getOptions());
             productOptionRepository.saveAll(options);
         }
     }
@@ -55,7 +55,6 @@ public class ProductService {
                 .name(requestProduct.getName())
                 .description(requestProduct.getDescription())
                 .price(requestProduct.getPrice())
-                .stock(requestProduct.getStock())
                 .category(category)
                 .user(user)
                 .build();
@@ -90,13 +89,12 @@ public class ProductService {
             // optionValue : {optionName, optionValue}
             // 아래에 다른 옵션이 있는 경우 재귀 호출로 더 깊이 찾기
             if (optionValue instanceof Map) {
-                createdOptions.add(currentOption);
-
+                createdOptions.add(currentOption); // 사이즈
                 List<ProductOption> childOptions = parseOptions(product, currentOption, (Map<String, Object>) optionValue);
                 createdOptions.addAll(childOptions);
             }
 
-            // optionValue : optionValue
+            // optionName : optionValue
             // 옵션에 대한 값이 있는 경우 재고로 판단
             else if (optionValue instanceof Integer) {
                 int stock = (Integer) optionValue;

@@ -31,7 +31,7 @@ public class ProductOption {
     @JoinColumn(name = "parent_id")
     private ProductOption parent;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent") // cascade = CascadeType.ALL 하면 자식도 다 저장되버림
     private List<ProductOption> children = new ArrayList<>();
 
     @Column(name = "stock")
@@ -43,6 +43,7 @@ public class ProductOption {
         this.stock = stock;
         this.product = product;
         if (parent != null) {
+            System.out.println("앙앙앙");
             this.setParent(parent);
         }
     }

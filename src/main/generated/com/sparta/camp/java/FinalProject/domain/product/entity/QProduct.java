@@ -36,8 +36,6 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final ListPath<ProductImages, QProductImages> productImages = this.<ProductImages, QProductImages>createList("productImages", ProductImages.class, QProductImages.class, PathInits.DIRECT2);
 
-    public final NumberPath<Integer> stock = createNumber("stock", Integer.class);
-
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public final com.sparta.camp.java.FinalProject.domain.user.entity.QUser user;

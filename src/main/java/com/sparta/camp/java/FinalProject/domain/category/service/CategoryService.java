@@ -21,8 +21,9 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findAll();
         Map<Long, CategoryResponse> responseMap = new HashMap<>();
         List<CategoryResponse> rootCategories = new ArrayList<>();
+
         for (Category category : categories) {
-            responseMap.put(category.getId(), CategoryResponse.fromEntity(category));
+            responseMap.put(category.getId(), new CategoryResponse(category));
         }
 
         for (Category childCategory : categories) {

@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .securityMatcher("/**")
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/uploads/**", "/css/**", "/images/**", "/js/**", "/favicon.ico", "/error").permitAll()
-                                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+//                                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                                 .anyRequest().permitAll()
                 )
                 .csrf(csrf -> csrf.disable())

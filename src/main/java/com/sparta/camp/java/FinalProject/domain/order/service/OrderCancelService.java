@@ -53,7 +53,7 @@ public class OrderCancelService {
     private void restoreProductStock(List<OrderProduct> purchaseProducts) {
         for (OrderProduct purchaseProduct : purchaseProducts) {
             Product product = purchaseProduct.getProduct();
-            product.increaseStock(purchaseProduct.getQuantity());
+//            product.increaseStock(purchaseProduct.getQuantity());
             productRepository.save(product);
         }
     }

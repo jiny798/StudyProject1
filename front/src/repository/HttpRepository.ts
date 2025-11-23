@@ -1,7 +1,6 @@
 import AxiosHttpClient, { type HttpRequestConfig } from '@/http/AxiosHttpClient'
 import { inject, singleton } from 'tsyringe'
 import { plainToInstance } from 'class-transformer'
-import Null from '@/entity/data/Null'
 import Paging from '@/entity/data/Paging'
 
 @singleton()
@@ -14,9 +13,10 @@ export default class HttpRepository {
 
   public async getList<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T }): Promise<Paging<T>> {
     return this.httpClient.request({ ...config, method: 'GET' }).then((response) => {
-      const paging = plainToInstance<Paging<T>, any>(Paging, response)
+      console.log("앙 응답 : " + response)
+      const paging = plainToInstance<Paging<T>, any>(Paging, response.message)
       // const items: T[] = plainToInstance<T, any>(clazz, response.items)
-      const items: T[] = plainToInstance<T, any>(clazz, response.items ?? []) as T[]
+      const items: T[] = plainToInstance<T, any>(clazz, response.message.items ?? []) as T[]
       paging.setItems(items)
       return paging
     })
@@ -24,7 +24,8 @@ export default class HttpRepository {
 
   public async getAll<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T }): Promise<T[]> {
     return this.httpClient.request({ ...config, method: 'GET' }).then((response) => {
-      return plainToInstance<T, any>(clazz, response ?? []) as T[]
+      const data = response?.message ?? []
+      return plainToInstance<T, any>(clazz, data) as T[] // data 를 받아 T 타입으로
     })
   }
 

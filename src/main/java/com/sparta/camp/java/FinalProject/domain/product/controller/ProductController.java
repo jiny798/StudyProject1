@@ -5,7 +5,7 @@ import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.R
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductDetailResponse;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductResponse;
-import com.sparta.camp.java.FinalProject.domain.product.service.ProductService;
+import com.sparta.camp.java.FinalProject.domain.product.service.AdminProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private final AdminProductService adminProductService;
 
     @GetMapping("/{productId}")
     public ApiResponse<ProductDetailResponse> get(@PathVariable Long productId) {
-        return ApiResponse.success(productService.get(productId));
+        return ApiResponse.success(adminProductService.get(productId));
     }
 
     @GetMapping("/products")
     public ApiResponse<PagingResponse<ProductResponse>> getList(@ModelAttribute RequestPage requestPage) throws Exception {
-        return ApiResponse.success(productService.getList(requestPage));
+        return ApiResponse.success(adminProductService.getList(requestPage));
     }
 
 }

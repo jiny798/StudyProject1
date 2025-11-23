@@ -27,8 +27,6 @@ public class RequestProduct {
     @Positive
     private BigDecimal price;
 
-    private Integer stock;
-
     private Long categoryId;
 
     @NotNull

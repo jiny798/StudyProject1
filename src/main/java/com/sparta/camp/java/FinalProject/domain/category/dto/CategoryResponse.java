@@ -1,37 +1,22 @@
 package com.sparta.camp.java.FinalProject.domain.category.dto;
 
-
-import com.querydsl.core.annotations.QueryProjection;
 import com.sparta.camp.java.FinalProject.domain.category.entity.Category;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.experimental.FieldDefaults;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Builder
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryResponse {
-    private Long id;
-    private String name;
-    private List<CategoryResponse> children;
+    private final Long id;
+    private final String name;
+    private final Long parentId;
+    private final List<CategoryResponse> children = new ArrayList<>();
 
-    public static CategoryResponse fromEntity(Category category) {
-        return CategoryResponse.builder()
-                .id(category.getId())
-                .name(category.getName())
-                .children(new ArrayList<>())
-                .build();
+    public CategoryResponse(Category category) {
+        this.id = category.getId();
+        this.name = category.getName();
+        this.parentId = (category.getParent() != null) ? category.getParent().getId() : null;
     }
 
-    @QueryProjection
-    public CategoryResponse(Long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

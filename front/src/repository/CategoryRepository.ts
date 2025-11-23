@@ -1,23 +1,41 @@
-import { inject, singleton } from 'tsyringe'
+import {inject, singleton} from 'tsyringe'
 import HttpRepository from '@/repository/HttpRepository'
-import Flavor from '@/entity/product/Flavor'
 import Category from '@/entity/product/Category'
+import type CategoryWrite from "@/entity/product/CategoryWrite.ts";
 
 @singleton()
 export default class CategoryRepository {
-  constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {}
+  constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
+  }
 
-  public write(request: Category) {
+  public write(request: CategoryWrite) {
     return this.httpRepository.post({
-      path: '/api/category',
+      path: '/api/admin/categories',
       body: request,
     })
+  }
+
+  public modify(id: number, request: CategoryWrite) {
+    return this.httpRepository.patch({
+        path: `/api/admin/categories/${id}`,
+        body: request,
+      }
+    )
   }
 
   public getAll() {
     return this.httpRepository.getAll<Category>(
       {
-        path: `/api/category`,
+        path: `/api/admin/categories`,
+      },
+      Category,
+    )
+  }
+
+  public getLeafCategories() {
+    return this.httpRepository.getAll<Category>(
+      {
+        path: `/api/admin/categories/leaves`,
       },
       Category,
     )
@@ -26,9 +44,15 @@ export default class CategoryRepository {
   public get(id: number) {
     return this.httpRepository.get<Category>(
       {
-        path: `/api/category/{id}`,
+        path: `/api/admin/categories/${id}`,
       },
       Category,
     )
+  }
+
+  public delete(id: number) {
+    return this.httpRepository.delete({
+      path: `/api/admin/categories/${id}`,
+    })
   }
 }

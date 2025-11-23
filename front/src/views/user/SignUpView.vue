@@ -78,7 +78,6 @@ function doSignup() {
 
   formRef.value.validate((valid) => {
     if (valid) {
-      // Repository에 signup 메서드가 있다고 가정합니다.
       USER_REPOSITORY.signup(state.signup)
         .then(() => {
           ElMessage.success('회원가입이 완료되었습니다! 로그인해주세요.')

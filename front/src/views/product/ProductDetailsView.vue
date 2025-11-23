@@ -60,11 +60,9 @@
 import { ref, reactive, defineProps, onMounted } from 'vue'
 import { container } from 'tsyringe'
 import ProductRepository from '@/repository/ProductRepository'
-import FlavorRepository from '@/repository/FlavorRepository'
 import CategoryRepository from '@/repository/CategoryRepository'
 import OrderRepository from '@/repository/OrderRepository'
 import Product from '@/entity/product/Product'
-import Flavor from '@/entity/product/Flavor'
 import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
 

@@ -19,6 +19,10 @@
         <div v-if="fileList.length < 2" class="checkRequired">사진을 2장 이상 등록해주세요</div>
       </el-form-item>
 
+      <el-form-item label="상품 가격" prop="title">
+        <el-input v-model="state.productWrite.price" maxlength="10" show-word-limit placeholder="가격" />
+      </el-form-item>
+
       <el-form-item label="카테고리" prop="category">
         <el-select v-model="state.productWrite.categoryId" placeholder="카테고리를 선택해주세요">
           <el-option v-for="item in state.categories" :key="item.id" :label="item.name" :value="item.id" />
@@ -42,25 +46,6 @@
         </div>
       </el-form-item>
 
-      <template v-if="options.length === 0">
-        <el-form-item label="재고" prop="stock">
-          <el-input
-            v-model="state.productWrite.stock"
-            placeholder="숫자만 입력"
-            @input="formatNumberInput('stock')"
-            suffix-icon="el-icon-money"
-          />
-        </el-form-item>
-
-        <el-form-item label="가격" prop="price">
-          <el-input
-            v-model.number="state.productWrite.price"
-            placeholder="숫자만 입력"
-            @input="formatNumberInput('price')"
-            suffix-icon="el-icon-money"
-          />
-        </el-form-item>
-      </template>
 
       <div ref="editorRoot" class="editor-area" />
 
@@ -173,7 +158,6 @@ function write() {
   const requestBody = { ...state.productWrite }
 
   if (options.value.length > 0) {
-    requestBody.price = null
     requestBody.stock = null
     requestBody.options = buildOptionsObject(options.value)
   } else {
@@ -189,7 +173,7 @@ function write() {
   PRODUCT_REPOSITORY.write(requestBody)
     .then(() => {
       ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
-      router.replace('/')
+      router.replace('/admin')
     })
     .catch((e: HttpError) => {
       ElMessage({ type: 'error', message: e.getMessage() })
@@ -202,7 +186,7 @@ function write() {
 // --- 에디터 및 라이프사이클 ---
 onMounted(async () => {
   // 1. 카테고리 로드
-  CATEGORY_REPOSITORY.getAll().then((responseList) => {
+  CATEGORY_REPOSITORY.getLeafCategories().then((responseList) => {
     state.categories = responseList
   })
 
@@ -229,7 +213,7 @@ onMounted(async () => {
           const formData = new FormData()
           formData.append('file', blob)
           try {
-            const response = await fetch('http://localhost:8080/api/images', {
+            const response = await fetch('http://localhost:8080/api/admin/images', {
               method: 'POST',
               body: formData,
               credentials: 'include',
@@ -304,7 +288,7 @@ const handleUpload = async ({ file, onSuccess, onError }: any) => {
   try {
     const formData = new FormData()
     formData.append('file', file)
-    const res = await fetch('http://localhost:8080/api/images', {
+    const res = await fetch('http://localhost:8080/api/admin/images', {
       method: 'POST',
       body: formData,
       credentials: 'include',

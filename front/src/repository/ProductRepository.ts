@@ -11,7 +11,7 @@ export default class ProductRepository {
 
   public write(request: ProductWrite) {
     return this.httpRepository.post({
-      path: '/api/products',
+      path: '/api/admin/products',
       body: request,
     })
   }
@@ -23,7 +23,7 @@ export default class ProductRepository {
   public getList(page: number) {
     return this.httpRepository.getList<Product>(
       {
-        path: `/api/products?page=${page}&size=10`,
+        path: `/api/admin/products?page=${page}&size=10`,
       },
       Product,
     )
@@ -31,7 +31,7 @@ export default class ProductRepository {
 
   public delete(productId: number) {
     return this.httpRepository.delete({
-      path: `/api/products/${productId}`,
+      path: `/api/admin/products/${productId}`,
     })
   }
 }
