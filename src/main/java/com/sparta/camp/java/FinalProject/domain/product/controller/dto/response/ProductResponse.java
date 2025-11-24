@@ -1,6 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.product.controller.dto.response;
 
 import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.domain.product.entity.ProductImages;
 import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +27,8 @@ public class ProductResponse {
         this.name = product.getName();
         this.price = product.getPrice();
         this.description = product.getDescription();
-        this.productImages = new ArrayList<>();
+        this.productImages = product.getProductImages().stream()
+                .map(ProductImages::getImageUrl).toList();
     }
 
 }

@@ -13,7 +13,7 @@
 
       <!-- 정보 영역 -->
       <div class="info-area">
-        <h1 class="product-title">{{ state.product.title }}</h1>
+        <h1 class="product-title">{{ state.product.name }}</h1>
         <p class="product-price">{{ state.product.price.toLocaleString() }}원</p>
 
         <dl class="product-meta">

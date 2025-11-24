@@ -8,12 +8,12 @@
       <li v-for="product in state.productPage.items" :key="product.id" class="product-item">
         <div class="thumbnail">
           <a @click="goProductDetail(product.id)" style="cursor: pointer">
-            <img :src="product.images?.[0]" class="product-image" alt="상품 이미지" />
+            <img :src="product.productImages?.[0]" class="product-image" alt="상품 이미지" />
           </a>
         </div>
         <div class="description">
           <div class="name">
-            <a>{{ product.title }}</a>
+            <a>{{ product.name }}</a>
           </div>
           <p class="price">{{ product.price.toLocaleString() }}원</p>
         </div>
@@ -59,6 +59,7 @@ const state = reactive<StateType>({
 function getList(page = 1) {
   PRODUCT_REPOSITORY.getList(page).then((responsePage) => {
     state.productPage = responsePage
+    console.log(responsePage)
   })
 }
 

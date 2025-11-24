@@ -6,11 +6,10 @@ import com.sparta.camp.java.FinalProject.domain.category.entity.Category;
 import com.sparta.camp.java.FinalProject.domain.product.support.JsonToMapConverter;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Table;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicInsert;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -42,6 +41,7 @@ public class Product {
     @Column(nullable = false)
     BigDecimal price;
 
+    @BatchSize(size = 100)
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductImages> productImages = new ArrayList<>();
 

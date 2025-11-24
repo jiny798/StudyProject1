@@ -3,7 +3,8 @@
     <h1>상품 등록</h1>
     <el-form label-position="top" class="product-form">
       <el-form-item label="상품 제목" prop="title">
-        <el-input v-model="state.productWrite.name" maxlength="30" show-word-limit placeholder="상품명" />
+        <el-input v-model="state.productWrite.name" maxlength="30" show-word-limit
+                  placeholder="상품명"/>
       </el-form-item>
 
       <el-form-item label="상품 이미지" required>
@@ -14,18 +15,22 @@
           :http-request="handleUpload"
           :on-remove="handleRemove"
         >
-          <el-icon><Plus /></el-icon>
+          <el-icon>
+            <Plus/>
+          </el-icon>
         </el-upload>
         <div v-if="fileList.length < 2" class="checkRequired">사진을 2장 이상 등록해주세요</div>
       </el-form-item>
 
       <el-form-item label="상품 가격" prop="title">
-        <el-input v-model="state.productWrite.price" maxlength="10" show-word-limit placeholder="가격" />
+        <el-input v-model="state.productWrite.price" maxlength="10" show-word-limit
+                  placeholder="가격"/>
       </el-form-item>
 
       <el-form-item label="카테고리" prop="category">
         <el-select v-model="state.productWrite.categoryId" placeholder="카테고리를 선택해주세요">
-          <el-option v-for="item in state.categories" :key="item.id" :label="item.name" :value="item.id" />
+          <el-option v-for="item in state.categories" :key="item.id" :label="item.name"
+                     :value="item.id"/>
         </el-select>
       </el-form-item>
 
@@ -34,24 +39,26 @@
           <div v-for="(option, index) in options" :key="option.id" class="option-group">
             <div class="option-header">
               <span style="align-self: center; font-weight:bold; margin-right:10px;">옵션명:</span>
-              <el-input v-model="option.optionName" placeholder="예: 색상" class="option-name-input" />
+              <el-input v-model="option.optionName" placeholder="예: 색상" class="option-name-input"/>
               <el-button type="danger" plain @click="removeOption(index)">그룹 삭제</el-button>
             </div>
-            <RecursiveOptions :option-values="option.optionValues" />
+            <RecursiveOptions :option-values="option.optionValues"/>
           </div>
 
-          <el-button type="primary" plain @click="addTopLevelOption" style="width:100%; margin-top:10px;">
+          <el-button type="primary" plain @click="addTopLevelOption"
+                     style="width:100%; margin-top:10px;">
             + 최상위 옵션 추가
           </el-button>
         </div>
       </el-form-item>
 
 
-      <div ref="editorRoot" class="editor-area" />
+      <div ref="editorRoot" class="editor-area"/>
 
-      <div v-if="showPopup" class="image-popup" :style="{ top: popupY + 'px', left: popupX + 'px' }">
-        <label>Width: <input v-model="inputWidth" /></label>
-        <label>Height: <input v-model="inputHeight" /></label>
+      <div v-if="showPopup" class="image-popup"
+           :style="{ top: popupY + 'px', left: popupX + 'px' }">
+        <label>Width: <input v-model="inputWidth"/></label>
+        <label>Height: <input v-model="inputHeight"/></label>
         <button @click="applyResize">적용</button>
       </div>
 
@@ -69,19 +76,19 @@
 </template>
 
 <script setup lang="ts">
-import { ElMessage, type UploadUserFile } from 'element-plus'
-import { onMounted, onBeforeUnmount, ref, reactive, nextTick } from 'vue' // [중요] nextTick 추가
+import {ElMessage, type UploadUserFile} from 'element-plus'
+import {onMounted, onBeforeUnmount, ref, reactive, nextTick} from 'vue' // [중요] nextTick 추가
 import Editor from '@toast-ui/editor'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import ProductWrite from '@/entity/product/ProductWrite.ts'
-import { container } from 'tsyringe'
-import { useRouter } from 'vue-router'
+import {container} from 'tsyringe'
+import {useRouter} from 'vue-router'
 import type HttpError from '@/http/HttpError.ts'
 import ProductRepository from '@/repository/ProductRepository.ts'
 import CategoryRepository from '@/repository/CategoryRepository.ts'
 import type Category from '@/entity/product/Category.ts'
 import RecursiveOptions from './RecursiveOptions.vue'
-import type { Option, OptionValue } from './types'
+import type {Option, OptionValue} from './types'
 
 const editorRoot = ref<HTMLDivElement | null>(null)
 let editorInstance: Editor | null = null
@@ -124,7 +131,7 @@ const createNewOptionValue = (): OptionValue => ({
 const createNewOption = (): Option => ({
   id: nextId++,
   optionName: '',
-  optionValues: [ createNewOptionValue() ], // 핵심: 빈 값 1개 미리 생성
+  optionValues: [createNewOptionValue()], // 핵심: 빈 값 1개 미리 생성
 })
 
 const addTopLevelOption = () => {
@@ -155,14 +162,12 @@ const buildOptionsObject = (opts: Option[]): Record<string, any> => {
 }
 
 function write() {
-  const requestBody = { ...state.productWrite }
+  const requestBody = {...state.productWrite}
 
   if (options.value.length > 0) {
-    requestBody.stock = null
     requestBody.options = buildOptionsObject(options.value)
   } else {
     requestBody.price = Number(String(requestBody.price).replace(/,/g, ''))
-    requestBody.stock = Number(String(requestBody.stock).replace(/,/g, ''))
     requestBody.options = {}
   }
 
@@ -172,11 +177,11 @@ function write() {
   loading.value = true
   PRODUCT_REPOSITORY.write(requestBody)
     .then(() => {
-      ElMessage({ type: 'success', message: '글 등록이 완료되었습니다.' })
+      ElMessage({type: 'success', message: '글 등록이 완료되었습니다.'})
       router.replace('/admin')
     })
     .catch((e: HttpError) => {
-      ElMessage({ type: 'error', message: e.getMessage() })
+      ElMessage({type: 'error', message: e.getMessage()})
     })
     .finally(() => {
       loading.value = false
@@ -185,15 +190,15 @@ function write() {
 
 // --- 에디터 및 라이프사이클 ---
 onMounted(async () => {
-  // 1. 카테고리 로드
+  // 카테고리 로드
   CATEGORY_REPOSITORY.getLeafCategories().then((responseList) => {
     state.categories = responseList
   })
 
-  // 2. [중요] 화면 렌더링 완료 대기 (화면 안바뀜 현상 해결)
+  // 화면 렌더링 완료 대기 (화면 안바뀜 현상 해결)
   await nextTick()
 
-  // 3. 에디터 초기화
+  // 에디터 초기화
   if (editorRoot.value) {
     // 기존 인스턴스 정리 (혹시 남아있을 경우)
     if (editorInstance) {
@@ -218,7 +223,9 @@ onMounted(async () => {
               body: formData,
               credentials: 'include',
             })
-            const imageUrl = await response.text()
+            const jsonString = await response.text();
+            const data = JSON.parse(jsonString);
+            const imageUrl = data.message;
             callback(imageUrl, blob.name)
           } catch (err) {
             console.error('업로드 실패', err)
@@ -284,7 +291,7 @@ const formatNumberInput = (field: 'price' | 'stock') => {
 const fileList = ref<UploadUserFile[]>([])
 const imageMap = new Map<string, string>()
 
-const handleUpload = async ({ file, onSuccess, onError }: any) => {
+const handleUpload = async ({file, onSuccess, onError}: any) => {
   try {
     const formData = new FormData()
     formData.append('file', file)
@@ -293,8 +300,11 @@ const handleUpload = async ({ file, onSuccess, onError }: any) => {
       body: formData,
       credentials: 'include',
     })
-    const uploadedUrl = await res.text()
-    imageMap.set(file.uid, uploadedUrl)
+    // const uploadedUrl = await res.text()
+    const jsonString = await res.text();
+    const data = JSON.parse(jsonString);
+    const imageUrl = data.message;
+    imageMap.set(file.uid, imageUrl)
     onSuccess()
   } catch (err) {
     ElMessage.error('업로드 실패')
@@ -317,14 +327,17 @@ const getUploadedImageUrls = () => {
   background-color: #fff;
   border-radius: 8px;
 }
+
 .product-form {
   max-width: 100%;
 }
+
 .checkRequired {
   color: #f56c6c;
   font-size: 13px;
   margin-top: 4px;
 }
+
 .image-popup {
   position: absolute;
   background: white;
@@ -334,6 +347,7 @@ const getUploadedImageUrls = () => {
   border-radius: 6px;
   z-index: 9999;
 }
+
 .option-container {
   width: 100%;
   border: 1px solid #dcdfe6;
@@ -341,6 +355,7 @@ const getUploadedImageUrls = () => {
   border-radius: 4px;
   background-color: #fefefe;
 }
+
 .option-group {
   border: 1px solid #e4e7ed;
   padding: 15px;
@@ -348,6 +363,7 @@ const getUploadedImageUrls = () => {
   border-radius: 4px;
   background-color: #fff;
 }
+
 .option-header {
   display: flex;
   gap: 10px;
@@ -355,11 +371,13 @@ const getUploadedImageUrls = () => {
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
 }
+
 .option-name-input {
   width: auto;
   flex-grow: 2;
   font-weight: bold;
 }
+
 .editor-area {
   margin-top: 20px;
   margin-bottom: 20px;
