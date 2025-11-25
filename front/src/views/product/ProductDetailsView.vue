@@ -14,7 +14,7 @@
       <!-- 정보 영역 -->
       <div class="info-area">
         <h1 class="product-title">{{ state.product.name }}</h1>
-        <p class="product-price">{{ state.product.price.toLocaleString() }}원</p>
+        <p class="product-price">{{ state.product.price }}원</p>
 
         <dl class="product-meta">
           <div>
@@ -24,15 +24,15 @@
         </dl>
 
         <!-- 맛 선택 -->
-        <div class="flavor-select" v-for="(f, index) in state.product.optionCount" :key="index">
-          <label>맛 선택 {{ index + 1 }}</label>
-          <select v-model="selectedFlavors[index]">
-            <option disabled value="">맛을 선택하세요</option>
-            <option v-for="flavor in state.flavorList" :key="flavor.name" :value="flavor">
-              {{ flavor.name }}
-            </option>
-          </select>
-        </div>
+<!--        <div class="flavor-select" v-for="(f, index) in state.product.optionCount" :key="index">-->
+<!--          <label>맛 선택 {{ index + 1 }}</label>-->
+<!--          <select v-model="selectedFlavors[index]">-->
+<!--            <option disabled value="">맛을 선택하세요</option>-->
+<!--            <option v-for="flavor in state.flavorList" :key="flavor.name" :value="flavor">-->
+<!--              {{ flavor.name }}-->
+<!--            </option>-->
+<!--          </select>-->
+<!--        </div>-->
 
         <!-- 버튼 -->
         <div class="button-group">
@@ -45,7 +45,7 @@
     <!-- 상세 정보 탭 -->
     <el-tabs v-model="activeTab" class="detail-tab">
       <el-tab-pane label="상세정보" name="detail">
-        <div class="tab-content" v-html="state.product.details"></div>
+        <div class="tab-content" v-html="state.product.description"></div>
       </el-tab-pane>
       <el-tab-pane label="배송정보" name="shipping">
         <div class="tab-content">
@@ -67,7 +67,6 @@ import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
-const FLAVOR_REPOSITORY = container.resolve(FlavorRepository)
 const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
 
@@ -80,13 +79,18 @@ const props = defineProps<{ productId: number }>()
 const state = reactive({
   product: new Product(),
   category: new Category(),
-  flavorList: [] as Flavor[],
   requestProduct: new RequestProduct(),
 })
 
-PRODUCT_REPOSITORY.get(props.productId).then((product) => (state.product = product))
-FLAVOR_REPOSITORY.getAll().then((flavors) => (state.flavorList = flavors))
-CATEGORY_REPOSITORY.getAll().then((res) => (state.category = res))
+PRODUCT_REPOSITORY.get(props.productId)
+  .then((product) => {
+    console.log(product)
+    state.product = product
+    }
+  )
+
+
+// CATEGORY_REPOSITORY.getAll().then((res) => (state.category = res))
 
 function addCart() {
   state.requestProduct.productId = state.product.id

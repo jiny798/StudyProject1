@@ -8,7 +8,7 @@ export default class HttpRepository {
   constructor(@inject(AxiosHttpClient) private readonly httpClient: AxiosHttpClient) {}
 
   public async get<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T }): Promise<T> {
-    return this.httpClient.request({ ...config, method: 'GET' }).then((response) => plainToInstance(clazz, response))
+    return this.httpClient.request({ ...config, method: 'GET' }).then((response) => plainToInstance(clazz, response.message))
   }
 
   public async getList<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T }): Promise<Paging<T>> {
