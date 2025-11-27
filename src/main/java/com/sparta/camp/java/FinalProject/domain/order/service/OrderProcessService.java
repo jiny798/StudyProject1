@@ -10,6 +10,8 @@ import com.sparta.camp.java.FinalProject.domain.order.entity.OrderProduct;
 import com.sparta.camp.java.FinalProject.domain.order.repository.OrderProductRepository;
 import com.sparta.camp.java.FinalProject.domain.order.repository.OrderRepository;
 import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
+import com.sparta.camp.java.FinalProject.domain.product.repository.ProductOptionRepository;
 import com.sparta.camp.java.FinalProject.domain.product.repository.ProductRepository;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRepository;
@@ -30,15 +32,16 @@ public class OrderProcessService {
     private final OrderProductRepository orderProductRepository;
     private final UserRepository userRepository;
     private final CouponService couponService;
+    private final ProductOptionRepository productOptionRepository;
 
     @Transactional
     public Order process(User user, List<OrderProductRequestDto> orderItems, String shoppingAddress, Long userCouponId) {
         Order order = createAndSavePurchase(user, shoppingAddress);
-        List<OrderProduct> orderroducts = createAndProcessOrderProducts(
+        List<OrderProduct> orderProducts = createAndProcessOrderProducts(
                 orderItems,
                 order);
 
-        BigDecimal originalTotalPrice = calculateTotalPrice(orderroducts);
+        BigDecimal originalTotalPrice = calculateTotalPrice(orderProducts);
         BigDecimal finalTotalPrice = originalTotalPrice;
 
         BigDecimal discountAmount = BigDecimal.ZERO;
@@ -59,6 +62,7 @@ public class OrderProcessService {
         return orderRepository.save(Order.builder()
                 .user(user)
                 .totalPrice(BigDecimal.ZERO)
+                .discountedPrice(BigDecimal.ZERO)
                 .status(OrderStatus.PENDING)
                 .shippingAddress(shoppingAddress)
                 .build());
@@ -71,14 +75,17 @@ public class OrderProcessService {
         for (OrderProductRequestDto itemRequest : itemRequests) {
             Product product = productRepository.findById(itemRequest.getProductId()).orElseThrow();
 
-//            validateStock(product, itemRequest.getQuantity());
-//            product.reduceStock(itemRequest.getQuantity());
+            ProductOption finalOption = null;
+            if (!itemRequest.getSelectedOptionNames().isEmpty()) {
+                finalOption = findFinalOption(product, itemRequest.getSelectedOptionNames());
+                finalOption.removeStock(itemRequest.getCount());
+            }
 
             OrderProduct purchaseProduct = OrderProduct.builder()
                     .product(product)
                     .order(order)
-                    .quantity(itemRequest.getQuantity())
                     .price(product.getPrice())
+                    .count(itemRequest.getCount())
                     .build();
 
             purchaseProducts.add(purchaseProduct);
@@ -88,16 +95,23 @@ public class OrderProcessService {
         return purchaseProducts;
     }
 
-//    private void validateStock(Product product, int requestedQuantity) {
-//        if (requestedQuantity > product.getStock()) {
-//            throw new ServiceException(ServiceExceptionCode.OUT_OF_STOCK_PRODUCT);
-//        }
-//    }
+    private ProductOption findFinalOption(Product product, List<String> optionNames) {
+        ProductOption currentParent = null;
+
+        for (String optionName : optionNames) {
+            ProductOption foundOption = productOptionRepository.findByProductAndNameAndParent(product, optionName, currentParent)
+                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 옵션: " + optionName));
+
+            currentParent = foundOption;
+        }
+
+        return currentParent;
+    }
 
     private BigDecimal calculateTotalPrice(List<OrderProduct> purchaseProducts) {
         return purchaseProducts.stream()
                 .map(purchaseProduct -> purchaseProduct.getPrice()
-                        .multiply(BigDecimal.valueOf(purchaseProduct.getQuantity())))
+                        .multiply(BigDecimal.valueOf(purchaseProduct.getCount())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

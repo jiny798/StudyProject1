@@ -25,7 +25,7 @@ public class OrderDetailProductDto {
         return OrderDetailProductDto.builder()
                 .productId(orderProduct.getProduct().getId())
                 .productName(orderProduct.getProduct().getName())
-                .quantity(orderProduct.getQuantity())
+                .quantity(orderProduct.getCount())
                 .price(orderProduct.getPrice())
                 .build();
     }

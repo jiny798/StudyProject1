@@ -41,10 +41,10 @@ public class OrderProduct {
     Product product;
 
     @Column(nullable = false)
-    Integer quantity;
+    BigDecimal price;
 
     @Column(nullable = false)
-    BigDecimal price;
+    Integer count;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -55,11 +55,11 @@ public class OrderProduct {
     LocalDateTime updatedAt;
 
     @Builder
-    OrderProduct(Order order, Product product, Integer quantity, BigDecimal price) {
+    OrderProduct(Order order, Product product, BigDecimal price, int count) {
         this.order = order;
         this.product = product;
-        this.quantity = quantity;
         this.price = price;
+        this.count = count;
     }
 
 

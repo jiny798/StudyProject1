@@ -58,5 +58,12 @@ public class ProductOption {
         }
     }
 
+    public void removeStock(int requestStock) {
+        if (this.stock - requestStock < 0) {
+            //todo 에러처리
+        }
+        this.stock -= requestStock;
+    }
+
 
 }

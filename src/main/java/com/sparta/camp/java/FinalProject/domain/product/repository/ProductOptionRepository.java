@@ -5,7 +5,10 @@ import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductOptionRepository extends JpaRepository<ProductOption, Long> {
     List<ProductOption> findByProductAndParentIsNull(Product product);
+
+    Optional<ProductOption> findByProductAndNameAndParent(Product product, String name, ProductOption parent);
 }
