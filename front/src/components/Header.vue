@@ -16,7 +16,8 @@
       <div class="nav-right">
         <template v-if="state.profile">
           <el-dropdown>
-            <span class="user-menu">{{ state.profile.nickname }}</span>
+<!--            <span class="user-menu">{{ state.profile.name }}</span>-->
+            <span class="user-menu">마이페이지</span>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item @click="router.push('/cart')"> 장바구니 </el-dropdown-item>
@@ -54,6 +55,7 @@ onBeforeMount(() => {
   USER_REPOSITORY.getProfile().then((profile) => {
     PROFILE_REPOSITORY.setProfile(profile)
     state.profile = profile
+    console.log(state.profile.email)
   })
 })
 

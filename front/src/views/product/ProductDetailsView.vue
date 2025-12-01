@@ -2,10 +2,10 @@
   <div class="product-detail-wrapper">
     <div class="product-detail">
       <div class="image-area">
-        <img class="main-image" :src="imageUrl" alt="상품 이미지" />
+        <img class="main-image" :src="imageUrl" alt="상품 이미지"/>
         <ul class="thumb-list">
           <li v-for="(img, idx) in state.product.productImages" :key="idx">
-            <img :src="img" class="thumb-image" alt="썸네일 이미지" />
+            <img :src="img" class="thumb-image" alt="썸네일 이미지"/>
           </li>
         </ul>
       </div>
@@ -53,8 +53,8 @@
 
         </div>
         <div class="button-group">
-          <button class="btn-primary">구매하기</button>
-          <button class="btn-secondary" @click="addCart">장바구니</button>
+          <button class="btn-primary" @click="buyNow">구매하기</button>
+          <button class="btn-secondary" @click="addToCart">장바구니</button>
         </div>
       </div>
     </div>
@@ -73,14 +73,17 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, defineProps, computed } from 'vue'
-import { container } from 'tsyringe'
+import {ref, reactive, defineProps, computed} from 'vue'
+import {container} from 'tsyringe'
+import { useRouter } from 'vue-router'
 import ProductRepository from '@/repository/ProductRepository'
 import CategoryRepository from '@/repository/CategoryRepository'
 import OrderRepository from '@/repository/OrderRepository'
 import Product from '@/entity/product/Product'
 import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
+import {ElMessageBox} from "element-plus";
+const router = useRouter()
 
 // 의존성 주입
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
@@ -98,96 +101,72 @@ const state = reactive({
   requestProduct: new RequestProduct(),
 })
 
-// === [핵심 로직] 중첩 객체(Nested Object) 파싱 ===
-
-// 1. 사용자가 선택한 값들을 저장 (예: ["블랙", "라지"])
+// 사용자가 선택한 값들을 저장 (예: ["블랙", "라지"])
 const selectedValues = ref<string[]>([])
 
-// 2. 현재 데이터 구조에 맞춰 라벨과 선택지를 계산
 const optionSteps = computed(() => {
   const steps: { label: string; choices: string[] }[] = []
-
-  // options가 없거나 비어있으면 종료
   if (!state.product.options || Object.keys(state.product.options).length === 0) {
     return []
   }
 
-  // 탐색 시작점 (Root)
   let currentPointer: any = state.product.options
-
-  // 무한 루프 방지용 제한 (옵션 깊이가 10단계를 넘진 않을 거라 가정)
-  for (let i = 0; i < 10; i++) {
-    // 1. 현재 Pointer의 키들을 가져옴 (이것이 옵션 이름. 예: "색상")
+  for (let i = 0; i < 10; i++) { // 무한 루프 방지
     const keys = Object.keys(currentPointer)
     if (keys.length === 0) break
 
-    const labelName = keys[0] // "색상"
-    const choicesMap = currentPointer[labelName] // {"블랙": {...}, "화이트": {...}}
-
-    // 만약 choicesMap이 없거나 객체가 아니면 종료 (구조 이상)
+    const labelName = keys[0]
+    const choicesMap = currentPointer[labelName]
     if (!choicesMap || typeof choicesMap !== 'object') break
 
-    // 2. 선택지 목록 추출 (예: ["블랙", "화이트"])
     const choiceList = Object.keys(choicesMap)
-
-    // 단계 추가
     steps.push({ label: labelName, choices: choiceList })
 
-    // 3. 사용자가 현재 단계(i)에서 값을 선택했는지 확인
     if (selectedValues.value.length > i) {
       const selectedChoice = selectedValues.value[i]
-
-      // 선택한 값으로 다음 깊이로 이동
-      // 예: "블랙"을 선택했으면 -> {"사이즈": {"라지": 10}} 로 포인터 이동
       const nextNode = choicesMap[selectedChoice]
 
-      if (typeof nextNode === 'number') {
-        // 숫자(재고)가 나오면 끝! 더 이상 steps를 만들지 않음
-        break
-      } else if (typeof nextNode === 'object') {
-        // 객체가 나오면 다음 루프에서 라벨(예: "사이즈")을 찾음
+      // id,stock 을 직접 가지고 있다면 중단
+      if (typeof nextNode === 'object' && nextNode !== null && !('id' in nextNode && 'stock' in nextNode)) {
         currentPointer = nextNode
       } else {
-        break
+        break // 최종 노드(id, stock 객체) 또는 더 이상 진행할 수 없으면 중단
       }
     } else {
-      // 아직 선택하지 않았다면 하위 옵션을 보여줄 수 없으므로 루프 종료
       break
     }
   }
-
   return steps
 })
 
-// 3. 최종 재고 확인 (선택이 끝났을 때 숫자가 나오는지 체크)
-const finalStock = computed(() => {
-  if (optionSteps.value.length === 0) return null
+const finalSelectedOption = computed(() => {
+  if (!state.product.options || selectedValues.value.length === 0) return null
 
-  // 현재 보이는 단계 수와 사용자 선택 수가 같은지 1차 확인
-  if (selectedValues.value.length < optionSteps.value.length) return null
-
-  // 직접 데이터 트리를 타고 내려가서 숫자가 나오는지 확인
   let ptr: any = state.product.options
   for (const val of selectedValues.value) {
-    // 1. 옵션명(Label) 껍질 벗기기 (예: "색상")
     const keys = Object.keys(ptr)
     if (keys.length === 0) return null
     const label = keys[0]
-
-    // 2. 선택지 맵으로 진입
     const choicesMap = ptr[label]
     if (!choicesMap) return null
-
-    // 3. 선택한 값(val)으로 다음 노드 진입
     ptr = choicesMap[val]
     if (ptr === undefined) return null
   }
 
-  return typeof ptr === 'number' ? ptr : null
+  // 최종 ptr이 id와 stock을 가진 객체인지 확인
+  if (typeof ptr === 'object' && ptr !== null && 'id' in ptr && 'stock' in ptr) {
+    console.log('id,stock : ' + ptr.id + ' ' + ptr.stock)
+    return ptr as { id: number; stock: number }
+  }
+
+  return null
 })
 
-// === [이벤트 핸들러] ===
+const finalStock = computed(() => finalSelectedOption.value?.stock ?? null)
+const finalOptionId = computed(() => finalSelectedOption.value?.id ?? null)
 
+
+// === [이벤트 핸들러] ===
 function onOptionSelect(event: Event, index: number) {
   const target = event.target as HTMLSelectElement
   const value = target.value
@@ -213,31 +192,42 @@ PRODUCT_REPOSITORY.get(props.productId)
     console.error(err)
   })
 
-function addCart() {
-  if (finalStock.value === null) {
-    alert('모든 옵션을 선택해주세요.')
-    return
-  }
+const addToCart = () => {
+  // if (!validateOptions()) return
 
-  if (finalStock.value <= 0) {
-    alert('품절된 상품입니다.')
-    return
-  }
+  // TODO: 실제 장바구니 추가 API 호출 로직
+  console.log('장바구니 추가:', {
+    productId: state.product.id,
+    options: selectedValues.value
+  })
 
-  state.requestProduct.productId = state.product.id
-  state.requestProduct.count = 1
-  // DB 저장을 위해 "블랙 / 라지" 형태로 변환
-  state.requestProduct.option = selectedValues.value.join(' / ')
-
-  console.log('Cart Request:', state.requestProduct)
-
-  ORDER_REPOSITORY.addCart(state.requestProduct)
-    .then(() => alert('장바구니에 담겼습니다.'))
-    .catch((e) => {
-      console.error(e)
-      alert('장바구니 담기 실패')
+  ElMessageBox.confirm('장바구니에 상품을 담았습니다. 장바구니로 이동하시겠습니까?', '알림', {
+    confirmButtonText: '이동',
+    cancelButtonText: '계속 쇼핑하기',
+    type: 'success'
+  })
+    .then(() => {
+      router.push('/cart')
+    })
+    .catch(() => {
+      // 사용자가 '계속 쇼핑하기'를 클릭한 경우
     })
 }
+
+const buyNow = () => {
+  // if (!validateOptions()) return
+
+  // TODO: 선택한 상품 정보를 결제 페이지의 상태(store)로 전달하는 로직
+  console.log('바로 구매:', {
+    productId: state.product.id,
+    options: selectedValues.value
+  })
+
+  router.push('/payment')
+}
+
+
+
 </script>
 
 <style scoped>
@@ -352,6 +342,7 @@ select {
   font-weight: bold;
   color: #2c3e50;
 }
+
 .sold-out {
   color: #e74c3c;
 }
@@ -377,6 +368,7 @@ select {
   background-color: #111;
   color: #fff;
 }
+
 .btn-primary:hover {
   background-color: #333;
 }
@@ -386,6 +378,7 @@ select {
   color: #333;
   border: 1px solid #ddd;
 }
+
 .btn-secondary:hover {
   background-color: #e0e0e0;
 }
@@ -393,6 +386,7 @@ select {
 .detail-tab {
   margin-top: 60px;
 }
+
 .tab-content {
   padding: 24px;
 }

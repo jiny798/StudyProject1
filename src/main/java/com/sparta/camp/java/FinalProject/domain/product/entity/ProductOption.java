@@ -1,5 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.product.entity;
 
+import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
+import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -58,12 +60,12 @@ public class ProductOption {
         }
     }
 
-    public void removeStock(int requestStock) {
-        if (this.stock - requestStock < 0) {
-            //todo 에러처리
+    public void reduceStock(int quantity) {
+        int restStock = this.stock - quantity;
+        if (restStock < 0) {
+            throw new ServiceException(ServiceExceptionCode.OUT_OF_STOCK_PRODUCT);
         }
-        this.stock -= requestStock;
+        this.stock = restStock;
     }
-
 
 }

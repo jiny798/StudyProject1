@@ -73,19 +73,22 @@ public class OrderProcessService {
         List<OrderProduct> purchaseProducts = new ArrayList<>();
 
         for (OrderProductRequestDto itemRequest : itemRequests) {
-            Product product = productRepository.findById(itemRequest.getProductId()).orElseThrow();
+            Product product = productRepository.findById(itemRequest.getProductId())
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT));
 
-            ProductOption finalOption = null;
-            if (!itemRequest.getSelectedOptionNames().isEmpty()) {
-                finalOption = findFinalOption(product, itemRequest.getSelectedOptionNames());
-                finalOption.removeStock(itemRequest.getCount());
-            }
+            ProductOption productOption = productOptionRepository.findById(itemRequest.getProductOptionId())
+                    .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT_OPTION));
 
+            validateStock(productOption, itemRequest.getQuantity());
+            productOption.reduceStock(itemRequest.getQuantity());
+
+            // 주문 상품 생성
             OrderProduct purchaseProduct = OrderProduct.builder()
                     .product(product)
+                    .productOption(productOption) // 주문 상품에 옵션 정보 설정
                     .order(order)
-                    .price(product.getPrice())
-                    .count(itemRequest.getCount())
+                    .quantity(itemRequest.getQuantity())
+                    .price(product.getPrice()) // 가격은 상품의 기본 가격을 따름 (옵션별 추가금액이 있다면 로직 변경 필요)
                     .build();
 
             purchaseProducts.add(purchaseProduct);
@@ -95,23 +98,16 @@ public class OrderProcessService {
         return purchaseProducts;
     }
 
-    private ProductOption findFinalOption(Product product, List<String> optionNames) {
-        ProductOption currentParent = null;
-
-        for (String optionName : optionNames) {
-            ProductOption foundOption = productOptionRepository.findByProductAndNameAndParent(product, optionName, currentParent)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 옵션: " + optionName));
-
-            currentParent = foundOption;
+    private void validateStock(ProductOption productOption, int requestedQuantity) {
+        if (requestedQuantity > productOption.getStock()) {
+            throw new ServiceException(ServiceExceptionCode.OUT_OF_STOCK_PRODUCT);
         }
-
-        return currentParent;
     }
 
-    private BigDecimal calculateTotalPrice(List<OrderProduct> purchaseProducts) {
-        return purchaseProducts.stream()
+    private BigDecimal calculateTotalPrice(List<OrderProduct> orderProducts) {
+        return orderProducts.stream()
                 .map(purchaseProduct -> purchaseProduct.getPrice()
-                        .multiply(BigDecimal.valueOf(purchaseProduct.getCount())))
+                        .multiply(BigDecimal.valueOf(purchaseProduct.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 

@@ -35,7 +35,7 @@ CREATE TABLE orders
     id               BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '주문 고유 번호',
     user_id          BIGINT         NOT NULL COMMENT '회원 고유 번호',
     total_price      DECIMAL(10, 2) NOT NULL COMMENT '총가격',
-    discounted_price      DECIMAL(10, 2) NOT NULL COMMENT '할인가격',
+    discounted_price DECIMAL(10, 2) NOT NULL COMMENT '할인가격',
     status           ENUM('PENDING', 'COMPLETED', 'CANCELED') NOT NULL COMMENT '배송 상태',
     shipping_address TEXT           NOT NULL COMMENT '배송 주소',
     created_at       DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
@@ -44,13 +44,14 @@ CREATE TABLE orders
 
 CREATE TABLE order_product
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    order_id   BIGINT         NOT NULL COMMENT '어떤 주문에 속하는지',
-    product_id BIGINT         NOT NULL COMMENT '어떤 상품인지',
-    price      DECIMAL(10, 2) NOT NULL COMMENT '주문 시점의 상품 가격',
-    count BIGINT         NOT NULL COMMENT '개수',
-    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    order_id          BIGINT         NOT NULL COMMENT '어떤 주문에 속하는지',
+    product_id        BIGINT         NOT NULL COMMENT '어떤 상품인지',
+    product_option_id BIGINT         NOT NULL COMMENT '상품 옵션',
+    price             DECIMAL(10, 2) NOT NULL COMMENT '주문 시점의 상품 가격',
+    quantity          INT            NOT NULL COMMENT '주문 수량',
+    created_at        DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at        DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
 );
 
 CREATE TABLE cart
@@ -63,12 +64,13 @@ CREATE TABLE cart
 
 CREATE TABLE cart_item
 (
-    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
-    cart_id    BIGINT NOT NULL COMMENT '장바구니 고유 번호',
-    product_id BIGINT NOT NULL COMMENT '상품 고유 번호',
-    quantity   INT    NOT NULL COMMENT '수량',
-    created_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
-    updated_at DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    cart_id           BIGINT NOT NULL COMMENT '장바구니 고유 번호',
+    product_id        BIGINT NOT NULL COMMENT '상품 고유 번호',
+    product_option_id BIGINT NOT NULL COMMENT '상품 옵션 고유 번호',
+    quantity          INT    NOT NULL COMMENT '수량',
+    created_at        DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6),
+    updated_at        DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6)
 );
 
 CREATE TABLE product
@@ -125,7 +127,7 @@ CREATE TABLE coupons
 (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     name                VARCHAR(255)   NOT NULL COMMENT '쿠폰 이름',
-    description                VARCHAR(300)   NOT NULL COMMENT '쿠폰 설명',
+    description         VARCHAR(300)   NOT NULL COMMENT '쿠폰 설명',
     discount_type       VARCHAR(20)    NOT NULL COMMENT '쿠폰 종류 (FIXED, PERCENTAGE)',
     discount_value      DECIMAL(19, 2) NOT NULL COMMENT '할인 값 (금액 또는 비율)',
     expiration_type     VARCHAR(30)    NOT NULL COMMENT '유효기한 종류 (VALID_DAYS_ON_ISSUE, FIXED_PERIOD)',
@@ -143,7 +145,7 @@ CREATE TABLE coupons
 
 CREATE TABLE user_coupons
 (
-    id  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
     user_id         BIGINT    NOT NULL COMMENT '사용자 ID',
     coupon_id       BIGINT    NOT NULL COMMENT '쿠폰 템플릿 ID',
     is_used         BOOLEAN   DEFAULT FALSE COMMENT '사용 여부',

@@ -1,280 +1,241 @@
 <template>
-  <div class="cart-page">
-    <!--    <h2 class="page-title">장바구니</h2>-->
+  <div class="cart-container">
+    <el-card shadow="never" class="cart-card">
+      <template #header>
+        <div class ="card-header">
+          <h2>장바구니</h2>
+        </div>
+      </template>
 
-    <!-- 구매자 정보 -->
-    <section class="buyer-info">
-      <h3 class="section-title">구매자 정보</h3>
-      <div class="info-row">
-        <span>이름</span><strong>{{ buyer.name }}</strong>
-      </div>
-      <div class="info-row">
-        <span>배송지</span><strong>{{ buyer.address }}</strong>
-      </div>
-      <div class="info-row">
-        <span>전화번호</span><strong>{{ buyer.phone }}</strong>
-      </div>
-      <div class="textarea-box">
-        <el-input
-          v-model="buyer.request"
-          type="textarea"
-          placeholder="배송 시 요청사항이 있다면 입력해주세요."
-          :rows="3"
-        />
-      </div>
-    </section>
+      <div v-if="cartItems.length > 0">
+        <el-table
+          ref="multipleTableRef"
+          :data="cartItems"
+          style="width: 100%"
+          @selection-change="handleSelectionChange"
+        >
+          <el-table-column type="selection" width="55" />
+          <el-table-column label="상품 정보">
+            <template #default="{ row }">
+              <div class="product-info">
+                <el-image :src="row.image" fit="cover" class="product-image" />
+                <div class="product-details">
+                  <p class="product-name">{{ row.name }}</p>
+                  <p class="product-options">{{ row.options }}</p>
+                </div>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column label="수량" width="150" align="center">
+            <template #default="{ row }">
+              <el-input-number v-model="row.quantity" :min="1" size="small" />
+            </template>
+          </el-table-column>
+          <el-table-column label="상품 금액" width="150" align="right">
+            <template #default="{ row }">
+              <span>{{ (row.price * row.quantity).toLocaleString() }}원</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="삭제" width="80" align="center">
+            <template #default="{ $index }">
+              <el-button type="danger" :icon="Delete" circle @click="removeItem($index)" />
+            </template>
+          </el-table-column>
+        </el-table>
 
-    <br />
+        <div class="cart-actions">
+          <el-button @click="removeSelectedItems">선택 삭제</el-button>
+        </div>
 
-    <!-- 상품 리스트 -->
-    <section class="product-list">
-      <div v-for="item in cartItems" :key="item.id" class="product-item">
-        <img :src="item.image" alt="product" class="thumb" />
-        <div class="details">
-          <p class="product-name">{{ item.productName }}</p>
-          <p class="product-option">{{ item.option }}</p>
-          <div class="qty-price">
-            <el-input-number v-model="item.count" :min="1" size="small" @change="updateQuantity(item)" />
-            <p class="price">{{ formatPrice(item.price * item.count) }}원</p>
+        <el-divider />
+
+        <div class="cart-summary">
+          <div class="summary-item">
+            <span>총 선택된 상품 금액</span>
+            <span class="price">{{ totalSelectedPrice.toLocaleString() }}원</span>
+          </div>
+          <div class="summary-item">
+            <span>배송비</span>
+            <span class="price">{{ shippingFee.toLocaleString() }}원</span>
+          </div>
+          <div class="summary-item total">
+            <span>결제 예상 금액</span>
+            <span class="total-price">{{ finalPaymentPrice.toLocaleString() }}원</span>
           </div>
         </div>
-        <el-icon @click="removeItem(item.id)" class="remove-btn">
-          <delete />
-        </el-icon>
-      </div>
-    </section>
 
-    <!-- 쿠폰 선택 -->
-    <section class="coupon-select">
-      <h3 class="section-title">쿠폰 선택</h3>
-      <el-select v-model="selectedCoupon" placeholder="쿠폰을 선택하세요" @change="applyCoupon">
-        <el-option
-          v-for="coupon in couponList"
-          :key="coupon.code"
-          :label="coupon.name + ' (-' + formatPrice(coupon.amount) + '원)'"
-          :value="coupon.code"
-        />
-      </el-select>
-    </section>
+        <div class="order-button-wrapper">
+          <el-button type="primary" size="large" @click="goToPayment">
+            선택 상품 주문하기
+          </el-button>
+        </div>
+      </div>
 
-    <!-- 요약 -->
-    <section class="summary">
-      <div class="summary-row">
-        <span>상품 금액</span><strong>{{ formatPrice(totalAmount) }}원</strong>
-      </div>
-      <div class="summary-row">
-        <span>할인 금액</span><strong class="discount">-{{ formatPrice(discountAmount) }}원</strong>
-      </div>
-      <div class="summary-row total">
-        <span>최종 결제 금액</span><strong>{{ formatPrice(finalAmount) }}원</strong>
-      </div>
-    </section>
-
-    <!-- 하단 고정 결제 -->
-    <div class="checkout-bar">
-      <el-button type="primary" size="large" class="checkout-btn" @click="goToPayment">
-        {{ formatPrice(finalAmount) }}원 결제하기
-      </el-button>
-    </div>
+      <el-empty v-else description="장바구니에 담긴 상품이 없습니다." />
+    </el-card>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { reactive, ref, computed } from 'vue'
-import { container } from 'tsyringe'
-import OrderRepository from '@/repository/OrderRepository'
-import type ProductInCart from '@/entity/order/ProductInCart'
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElTable } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
-import type RequestOrder from '@/entity/order/RequestOrder'
-import RequestProduct from '@/entity/order/RequestProduct'
 
-const ORDER_REPOSITORY = container.resolve(OrderRepository)
-const cartItems = reactive<ProductInCart[]>([])
-const requestOrder = reactive<RequestOrder>({
-  requestProductList: [],
-})
-const buyer = reactive({
-  name: '홍길동',
-  address: '서울특별시 강남구 테헤란로 123',
-  phone: '010-1234-5678',
-  request: '',
-})
+const router = useRouter()
 
-function getList() {
-  ORDER_REPOSITORY.getCart().then((responseArr) => {
-    cartItems.splice(0, cartItems.length, ...responseArr)
-  })
-}
-
-getList()
-
-const formatPrice = (amount: number) => amount.toLocaleString()
-const totalAmount = computed(() => cartItems.reduce((sum, item) => sum + item.price * item.count, 0))
-
-function updateQuantity(item: ProductInCart) {}
-
-function removeItem(id: number) {
-  const index = cartItems.findIndex((item) => item.id === id)
-  if (index !== -1) cartItems.splice(index, 1)
-}
-
-function goToPayment() {
-  console.log('결제 요청')
-  for (var i = 0; i < cartItems.length; i++) {
-    let req = new RequestProduct()
-    req.productId = cartItems[i].productId
-    req.count = cartItems[i].count
-    req.option = cartItems[i].option
-    requestOrder.requestProductList.push(req)
-    // console.log('req ' + JSON.stringify(req))
+// Mock Data - 실제로는 API를 통해 받아와야 합니다.
+const cartItems = ref([
+  {
+    id: 1,
+    name: '쫀쫀한 그레이 니트',
+    options: '색상: 그레이 / 사이즈: L',
+    price: 120000,
+    quantity: 1,
+    image: '/img2.png'
+  },
+  {
+    id: 2,
+    name: '상남자 아크릴 니트',
+    options: '색상: 블랙 / 사이즈: M',
+    price: 300,
+    quantity: 2,
+    image: '/img3.png'
+  },
+  {
+    id: 3,
+    name: '미친커플 니트',
+    options: '색상: 아이보리 / 사이즈: S',
+    price: 60000,
+    quantity: 1,
+    image: '/img.png'
   }
-  console.log('request Order ' + JSON.stringify(requestOrder.requestProductList))
-  ORDER_REPOSITORY.order(requestOrder)
-}
-
-const couponList = ref([
-  { code: 'SAVE10', name: '10% 할인쿠폰', amount: 3000 },
-  { code: 'WELCOME', name: '신규가입쿠폰', amount: 5000 },
 ])
-const selectedCoupon = ref<string | null>(null)
-const discountAmount = ref(0)
 
-function applyCoupon(code: string) {
-  const selected = couponList.value.find((c) => c.code === code)
-  discountAmount.value = selected?.amount ?? 0
+const multipleTableRef = ref<InstanceType<typeof ElTable>>()
+const multipleSelection = ref<typeof cartItems.value>([])
+
+const handleSelectionChange = (val: typeof cartItems.value) => {
+  multipleSelection.value = val
 }
 
-const finalAmount = computed(() => totalAmount.value - discountAmount.value)
+const removeItem = (index: number) => {
+  cartItems.value.splice(index, 1)
+  ElMessage.success('상품이 삭제되었습니다.')
+}
+
+const removeSelectedItems = () => {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning('삭제할 상품을 선택해주세요.')
+    return
+  }
+  cartItems.value = cartItems.value.filter(item => !multipleSelection.value.includes(item))
+  ElMessage.success('선택된 상품이 삭제되었습니다.')
+}
+
+const totalSelectedPrice = computed(() =>
+  multipleSelection.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+)
+
+const shippingFee = computed(() => {
+  if (multipleSelection.value.length === 0) return 0
+  return totalSelectedPrice.value >= 50000 ? 0 : 3000
+})
+
+const finalPaymentPrice = computed(() => totalSelectedPrice.value + shippingFee.value)
+
+const goToPayment = () => {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning('주문할 상품을 선택해주세요.')
+    return
+  }
+  // TODO: 선택된 상품 정보를 결제 페이지로 넘기는 로직 구현
+  router.push('/payment') // 임시로 결제 페이지로 이동
+}
 </script>
 
 <style scoped>
-.cart-page {
-  max-width: 720px;
+.cart-container {
+  padding: 2rem;
+  background-color: #f4f6f9;
+  min-height: calc(100vh - 60px);
+}
+
+.cart-card {
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 24px 16px 120px;
-  font-family: 'Pretendard', sans-serif;
 }
 
-.page-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-size: 18px;
+.card-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 12px;
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 15px;
-  color: #333;
-}
-
-.textarea-box {
-  margin-top: 12px;
-}
-
-.product-item {
+.product-info {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
 }
 
-.thumb {
+.product-image {
   width: 80px;
   height: 80px;
-  border-radius: 6px;
-  object-fit: cover;
+  margin-right: 1rem;
+  border-radius: 4px;
 }
 
-.details {
-  flex: 1;
+.product-details {
+  display: flex;
+  flex-direction: column;
 }
 
 .product-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
+  font-weight: 500;
 }
 
-.product-option {
-  font-size: 14px;
-  color: #999;
-  margin-bottom: 8px;
+.product-options {
+  font-size: 0.85rem;
+  color: #888;
 }
 
-.qty-price {
+.cart-actions {
+  margin-top: 1rem;
+}
+
+.cart-summary {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #fafafa;
+  border-radius: 4px;
+}
+
+.summary-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+
+.summary-item:last-child {
+  margin-bottom: 0;
+}
+
+.summary-item.total {
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .price {
-  font-size: 15px;
-  font-weight: 500;
-  color: #333;
+  color: #555;
 }
 
-.remove-btn {
-  font-size: 20px;
-  color: #bbb;
-  cursor: pointer;
-  transition: color 0.2s;
+.total-price {
+  color: #d32f2f;
 }
 
-.remove-btn:hover {
-  color: #f56c6c;
-}
-
-.coupon-select {
-  margin: 32px 0;
-}
-
-.summary {
-  border-top: 1px solid #eee;
-  padding-top: 20px;
-  font-size: 15px;
-}
-
-.summary-row {
+.order-button-wrapper {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.summary-row.total {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.discount {
-  color: #f56c6c;
-}
-
-.checkout-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #fff;
-  padding: 16px;
-  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.05);
-  display: flex;
-  justify-content: center;
-  z-index: 100;
-}
-
-.checkout-btn {
-  width: 100%;
-  max-width: 680px;
-  font-size: 16px;
-  font-weight: 600;
+  justify-content: flex-end;
+  margin-top: 2rem;
 }
 </style>

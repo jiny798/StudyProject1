@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.cart.dto;
+package com.sparta.camp.java.FinalProject.domain.cart.controller.dto;
 
 import com.sparta.camp.java.FinalProject.domain.cart.entity.CartItem;
 import lombok.Builder;

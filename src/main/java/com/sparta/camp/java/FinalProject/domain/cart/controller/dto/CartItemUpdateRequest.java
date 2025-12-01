@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.cart.dto;
+package com.sparta.camp.java.FinalProject.domain.cart.controller.dto;
 
 import jakarta.validation.constraints.Min;
 import lombok.Getter;

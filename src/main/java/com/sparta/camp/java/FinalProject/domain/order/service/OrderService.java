@@ -63,7 +63,7 @@ public class OrderService {
                         return OrderProductResponseDto.builder()
                                 .productId(orderProduct.getProduct().getId())
                                 .productName(orderProduct.getProduct().getName())
-                                .quantity(orderProduct.getCount())
+                                .quantity(orderProduct.getQuantity())
                                 .totalPrice(orderProduct.getPrice())
                                 .build();
                     }).toList();

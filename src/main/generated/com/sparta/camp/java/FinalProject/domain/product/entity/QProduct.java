@@ -32,6 +32,8 @@ public class QProduct extends EntityPathBase<Product> {
 
     public final StringPath name = createString("name");
 
+    public final ListPath<ProductOption, QProductOption> options = this.<ProductOption, QProductOption>createList("options", ProductOption.class, QProductOption.class, PathInits.DIRECT2);
+
     public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
     public final ListPath<ProductImages, QProductImages> productImages = this.<ProductImages, QProductImages>createList("productImages", ProductImages.class, QProductImages.class, PathInits.DIRECT2);

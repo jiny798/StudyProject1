@@ -1,9 +1,9 @@
 package com.sparta.camp.java.FinalProject.domain.cart.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartItemAddRequest;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartItemUpdateRequest;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartResponse;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartItemAddRequest;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartItemUpdateRequest;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartResponse;
 import com.sparta.camp.java.FinalProject.domain.cart.service.CartService;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.validation.Valid;

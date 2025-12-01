@@ -24,6 +24,8 @@ public enum ServiceExceptionCode {
     INSUFFICIENT_STOCK(400, "상품의 재고가 부족합니다."),
     INVALID_PRODUCT_OPTION(400, "옵션 형식이 잘못되었습니다."),
 
+    NOT_FOUND_PRODUCT_OPTION(404,"상품 옵션을 찾을 수 없습니다."),
+
     //Category
     NOT_FOUND_CATEGORY(404, "상품을 찾을 수 없습니다."),
     CATEGORY_PARENT_CYCLE(400, "부모 카테고리와 ID 값이 동일할 수 없습니다."),

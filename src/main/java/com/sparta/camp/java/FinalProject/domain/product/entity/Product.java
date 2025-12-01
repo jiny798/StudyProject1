@@ -45,6 +45,9 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProductImages> productImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    private List<ProductOption> options = new ArrayList<>();
+
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;

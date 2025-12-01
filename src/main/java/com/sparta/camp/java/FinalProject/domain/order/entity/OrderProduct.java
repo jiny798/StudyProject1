@@ -2,6 +2,7 @@ package com.sparta.camp.java.FinalProject.domain.order.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -44,7 +45,11 @@ public class OrderProduct {
     BigDecimal price;
 
     @Column(nullable = false)
-    Integer count;
+    Integer quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_option_id")
+    private ProductOption productOption;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -55,11 +60,12 @@ public class OrderProduct {
     LocalDateTime updatedAt;
 
     @Builder
-    OrderProduct(Order order, Product product, BigDecimal price, int count) {
+    OrderProduct(Order order, Product product, ProductOption productOption,Integer quantity, BigDecimal price, int count) {
         this.order = order;
         this.product = product;
+        this.productOption = productOption;
+        this.quantity = quantity;
         this.price = price;
-        this.count = count;
     }
 
 

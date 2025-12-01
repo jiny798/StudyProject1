@@ -23,10 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -115,14 +112,9 @@ public class AdminProductService {
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT));
 
         List<ProductOption> rootOptions = productOptionRepository.findByProductAndParentIsNull(product);
-
-        Map<String, Object> optionsMap = new LinkedHashMap<>();
-        for (ProductOption rootOption : rootOptions) {
-            optionsMap.put(rootOption.getName(), buildOptionMap(rootOption));
-        }
+        Map<String, Object> optionsMap = buildOptionsMap(rootOptions);
 
         return new ProductDetailResponse(product, optionsMap);
-
     }
 
     public PagingResponse<ProductResponse> getList(RequestPage requestPage) {
@@ -138,18 +130,20 @@ public class AdminProductService {
         productRepository.delete(product);
     }
 
-    private Object buildOptionMap(ProductOption option) {
-        if (option.getChildren() == null || option.getChildren().isEmpty()) {
-            return option.getStock();
+    private Map<String, Object> buildOptionsMap(List<ProductOption> options) {
+        Map<String, Object> map = new HashMap<>();
+        for (ProductOption option : options) {
+            if (option.getChildren().isEmpty()) {
+                Map<String, Object> leafNode = new HashMap<>();
+                leafNode.put("id", option.getId());
+                leafNode.put("stock", option.getStock());
+                map.put(option.getName(), leafNode);
+            } else {
+                map.put(option.getName(), buildOptionsMap(option.getChildren()));
+            }
         }
-
-        Map<String, Object> childMap = new LinkedHashMap<>();
-        for (ProductOption child : option.getChildren()) {
-            childMap.put(child.getName(), buildOptionMap(child));
-        }
-        return childMap;
+        return map;
     }
-
 }
 
 

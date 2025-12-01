@@ -70,7 +70,7 @@ public class OrderCancelService {
                 .map((orderProduct) -> {
                     Product product = orderProduct.getProduct();
                     BigDecimal totalPrice = orderProduct.getPrice()
-                            .multiply(BigDecimal.valueOf(orderProduct.getCount()));
+                            .multiply(BigDecimal.valueOf(orderProduct.getQuantity()));
 
                     return CancelledProductDto.builder()
                             .productId(product.getId())

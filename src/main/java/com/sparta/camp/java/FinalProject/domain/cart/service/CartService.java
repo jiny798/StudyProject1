@@ -2,10 +2,10 @@ package com.sparta.camp.java.FinalProject.domain.cart.service;
 
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartItemUpdateRequest;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartItemResponse;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartResponse;
-import com.sparta.camp.java.FinalProject.domain.cart.dto.CartItemAddRequest;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartItemUpdateRequest;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartItemResponse;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartResponse;
+import com.sparta.camp.java.FinalProject.domain.cart.controller.dto.CartItemAddRequest;
 import com.sparta.camp.java.FinalProject.domain.cart.entity.Cart;
 import com.sparta.camp.java.FinalProject.domain.cart.entity.CartItem;
 import com.sparta.camp.java.FinalProject.domain.cart.repository.CartItemRepository;

@@ -1,6 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.cart.entity;
 
 import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +36,10 @@ public class CartItem {
 
     @Column(nullable = false)
     int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_option_id", nullable = false) // nullable = false로 설정하여 항상 옵션이 선택되도록 강제
+    private ProductOption productOption;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

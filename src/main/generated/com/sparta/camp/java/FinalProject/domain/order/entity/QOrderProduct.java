@@ -22,8 +22,6 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
 
     public static final QOrderProduct orderProduct = new QOrderProduct("orderProduct");
 
-    public final NumberPath<Integer> count = createNumber("count", Integer.class);
-
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -33,6 +31,10 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
     public final NumberPath<java.math.BigDecimal> price = createNumber("price", java.math.BigDecimal.class);
 
     public final com.sparta.camp.java.FinalProject.domain.product.entity.QProduct product;
+
+    public final com.sparta.camp.java.FinalProject.domain.product.entity.QProductOption productOption;
+
+    public final NumberPath<Integer> quantity = createNumber("quantity", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
@@ -56,6 +58,7 @@ public class QOrderProduct extends EntityPathBase<OrderProduct> {
         super(type, metadata, inits);
         this.order = inits.isInitialized("order") ? new QOrder(forProperty("order"), inits.get("order")) : null;
         this.product = inits.isInitialized("product") ? new com.sparta.camp.java.FinalProject.domain.product.entity.QProduct(forProperty("product"), inits.get("product")) : null;
+        this.productOption = inits.isInitialized("productOption") ? new com.sparta.camp.java.FinalProject.domain.product.entity.QProductOption(forProperty("productOption"), inits.get("productOption")) : null;
     }
 
 }
