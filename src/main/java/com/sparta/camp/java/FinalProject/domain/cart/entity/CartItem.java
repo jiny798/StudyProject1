@@ -46,10 +46,11 @@ public class CartItem {
     LocalDateTime createdAt;
 
     @Builder
-    public CartItem(Cart cart, Product product, int quantity) {
+    public CartItem(Cart cart, Product product, int quantity, ProductOption productOption) {
         this.cart = cart;
         this.product = product;
         this.quantity = quantity;
+        this.productOption = productOption;
     }
 
     public void addQuantity(int quantity) {

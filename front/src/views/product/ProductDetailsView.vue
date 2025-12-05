@@ -79,16 +79,19 @@ import { useRouter } from 'vue-router'
 import ProductRepository from '@/repository/ProductRepository'
 import CategoryRepository from '@/repository/CategoryRepository'
 import OrderRepository from '@/repository/OrderRepository'
+import CartRepository from "@/repository/CartRepository.ts";
 import Product from '@/entity/product/Product'
 import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
 import {ElMessageBox} from "element-plus";
+import AddCart from "@/entity/cart/AddCart.ts";
 const router = useRouter()
 
 // 의존성 주입
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
+const CART_REPOSITORY = container.resolve(CartRepository)
 
 const activeTab = ref('detail')
 const imageUrl = ref('/g1.JPG') // 기본 이미지 (필요시 productImages[0]으로 교체 가능)
@@ -99,6 +102,7 @@ const state = reactive({
   product: new Product(),
   category: new Category(),
   requestProduct: new RequestProduct(),
+  addCart: new AddCart()
 })
 
 // 사용자가 선택한 값들을 저장 (예: ["블랙", "라지"])
@@ -165,8 +169,6 @@ const finalSelectedOption = computed(() => {
 const finalStock = computed(() => finalSelectedOption.value?.stock ?? null)
 const finalOptionId = computed(() => finalSelectedOption.value?.id ?? null)
 
-
-// === [이벤트 핸들러] ===
 function onOptionSelect(event: Event, index: number) {
   const target = event.target as HTMLSelectElement
   const value = target.value
@@ -193,13 +195,13 @@ PRODUCT_REPOSITORY.get(props.productId)
   })
 
 const addToCart = () => {
-  // if (!validateOptions()) return
+  const request = new AddCart()
+  state.addCart.optionId = finalOptionId.value
+  state.addCart.productId = props.productId
+  state.addCart.quantity = 1
 
-  // TODO: 실제 장바구니 추가 API 호출 로직
-  console.log('장바구니 추가:', {
-    productId: state.product.id,
-    options: selectedValues.value
-  })
+  CART_REPOSITORY.write(state.addCart)
+
 
   ElMessageBox.confirm('장바구니에 상품을 담았습니다. 장바구니로 이동하시겠습니까?', '알림', {
     confirmButtonText: '이동',

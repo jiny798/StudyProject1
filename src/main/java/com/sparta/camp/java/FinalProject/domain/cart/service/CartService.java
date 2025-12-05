@@ -11,6 +11,8 @@ import com.sparta.camp.java.FinalProject.domain.cart.entity.CartItem;
 import com.sparta.camp.java.FinalProject.domain.cart.repository.CartItemRepository;
 import com.sparta.camp.java.FinalProject.domain.cart.repository.CartRepository;
 import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
+import com.sparta.camp.java.FinalProject.domain.product.repository.ProductOptionRepository;
 import com.sparta.camp.java.FinalProject.domain.product.repository.ProductRepository;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRepository;
@@ -30,6 +32,7 @@ public class CartService {
     private final CartItemRepository cartItemRepository;
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
+    private final ProductOptionRepository productOptionRepository;
 
     @Transactional
     public void addCartItem(Long userId, CartItemAddRequest request) {
@@ -38,6 +41,9 @@ public class CartService {
 
         Product product = productRepository.findById(request.getProductId())
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT));
+
+        ProductOption productOption = productOptionRepository.findById(request.getOptionId())
+                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT_OPTION));
 
         Cart cart = cartRepository.findByUser(user)
                 .orElseGet(() -> {
@@ -55,6 +61,7 @@ public class CartService {
                             CartItem newCartItem = CartItem.builder()
                                     .cart(cart)
                                     .product(product)
+                                    .productOption(productOption)
                                     .quantity(request.getQuantity())
                                     .build();
                             cartItemRepository.save(newCartItem);

@@ -17,5 +17,5 @@ public class CartItemAddRequest {
     @Min(value = 1, message = "수량은 1 이상이어야 합니다.")
     private int quantity;
 
-    List<String> selectedOptionNames = new ArrayList<>();
+    private Long optionId;
 }
