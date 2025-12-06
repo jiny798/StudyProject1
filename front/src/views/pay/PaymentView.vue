@@ -1,4 +1,3 @@
-<!-- src/views/user/PaymentView.vue -->
 <template>
   <div class="payment-container">
     <el-card shadow="never" class="payment-card">
@@ -9,7 +8,6 @@
       </template>
 
       <div class="content-wrapper">
-        <!-- Left Section: Order Items & Shipping Info -->
         <div class="left-section">
           <section class="order-items-section">
             <h3>주문 상품</h3>
@@ -17,10 +15,10 @@
               <el-table-column label="상품 정보">
                 <template #default="{ row }">
                   <div class="product-info">
-                    <el-image :src="row.image" fit="cover" class="product-image" />
+                    <el-image src="https://via.placeholder.com/60" fit="cover" class="product-image" />
                     <div class="product-details">
-                      <p class="product-name">{{ row.name }}</p>
-                      <p class="product-options">{{ row.options }}</p>
+                      <p class="product-name">{{ row.productName }}</p>
+                      <p class="product-options">{{ row.optionDescription }}</p>
                     </div>
                   </div>
                 </template>
@@ -52,7 +50,6 @@
           </section>
         </div>
 
-        <!-- Right Section: Payment Summary -->
         <div class="right-section">
           <el-card shadow="never" class="summary-card">
             <template #header>
@@ -76,7 +73,7 @@
               <span class="total-price">{{ finalPaymentPrice.toLocaleString() }}원</span>
             </div>
             <el-button type="primary" class="payment-button" @click="onPayment">
-              결제하기
+              {{ finalPaymentPrice.toLocaleString() }}원 결제하기
             </el-button>
           </el-card>
         </div>
@@ -86,28 +83,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
+import type { CartItem } from "@/entity/cart/CartResponse.ts"; // 타입 import
 
-// Mock Data - 실제로는 API를 통해 받아와야 합니다.
-const cartItems = ref([
-  {
-    id: 1,
-    name: '쫀쫀한 그레이 니트',
-    options: '색상: 그레이 / 사이즈: L',
-    price: 120000,
-    quantity: 1,
-    image: '/img2.png'
-  },
-  {
-    id: 2,
-    name: '상남자 아크릴 니트',
-    options: '색상: 블랙 / 사이즈: M',
-    price: 300,
-    quantity: 2,
-    image: '/img3.png'
-  }
-])
+const router = useRouter()
+
+// 넘어온 데이터를 담을 변수
+const cartItems = ref<CartItem[]>([])
 
 const shippingInfo = ref({
   recipient: '홍길동',
@@ -115,52 +99,81 @@ const shippingInfo = ref({
   address: '서울시 강남구 테헤란로'
 })
 
+const totalDiscount = ref(0) // 지금은 0원 처리
+
+// ★★★ [핵심] 페이지 로드 시 데이터 수신 ★★★
+onMounted(() => {
+  // history.state에서 장바구니에서 넘긴 데이터를 꺼냅니다.
+  const receivedData = history.state.selectedItems
+
+  // 데이터가 없으면(URL 직접 입력해서 들어온 경우) 장바구니로 돌려보냄
+  if (!receivedData || receivedData.length === 0) {
+    ElMessage.error('주문할 상품 정보가 없습니다.')
+    router.replace('/cart') // 뒤로가기 방지를 위해 replace 사용
+    return
+  }
+
+  cartItems.value = receivedData
+})
+
+// 계산 로직 (받아온 cartItems 기반으로 자동 계산)
 const totalProductPrice = computed(() =>
-  cartItems.value.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 )
-const shippingFee = computed(() => (totalProductPrice.value >= 50000 ? 0 : 3000))
-const totalDiscount = ref(5000) // 예시 할인 금액
+
+const shippingFee = computed(() => {
+  if (totalProductPrice.value === 0) return 0
+  return totalProductPrice.value >= 50000 ? 0 : 3000
+})
+
 const finalPaymentPrice = computed(
   () => totalProductPrice.value + shippingFee.value - totalDiscount.value
 )
 
 const onPayment = () => {
-  ElMessage.success('결제 기능은 곧 구현될 예정입니다.')
-  // TODO: 결제 API 연동 로직
+  if (cartItems.value.length === 0) return
+
+  // 결제 요청 데이터 준비
+  const paymentData = {
+    items: cartItems.value.map(item => ({
+      id: item.cartItemId, // 혹은 productId
+      quantity: item.quantity
+    })),
+    amount: finalPaymentPrice.value,
+    shipping: shippingInfo.value
+  }
+
+  console.log("결제 요청 데이터:", paymentData)
+  ElMessage.success('결제 API 연동 예정입니다.')
 }
 </script>
 
 <style scoped>
+/* 스타일은 기존 PaymentView 스타일 그대로 유지 */
 .payment-container {
   padding: 2rem;
   background-color: #f4f6f9;
-  min-height: calc(100vh - 60px); /* 헤더 높이 제외 */
+  min-height: calc(100vh - 60px);
 }
-
 .payment-card {
   max-width: 1200px;
   margin: 0 auto;
 }
-
 .card-header h2 {
   margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
 }
-
 .content-wrapper {
   display: flex;
   gap: 2rem;
 }
-
 .left-section {
   flex: 3;
 }
-
 .right-section {
   flex: 1;
 }
-
 h3 {
   font-size: 1.2rem;
   font-weight: 500;
@@ -168,65 +181,53 @@ h3 {
   border-left: 3px solid #4a6fa5;
   padding-left: 0.5rem;
 }
-
 .product-info {
   display: flex;
   align-items: center;
 }
-
 .product-image {
   width: 60px;
   height: 60px;
   margin-right: 1rem;
   border-radius: 4px;
 }
-
 .product-details {
   display: flex;
   flex-direction: column;
 }
-
 .product-name {
   font-weight: 500;
 }
-
 .product-options {
   font-size: 0.85rem;
   color: #888;
 }
-
 .summary-card {
   position: sticky;
   top: 2rem;
 }
-
 .summary-row {
   display: flex;
   justify-content: space-between;
   margin-bottom: 1rem;
   font-size: 0.95rem;
 }
-
 .summary-row.total {
   font-size: 1.1rem;
   font-weight: bold;
 }
-
 .total-price {
   color: #d32f2f;
 }
-
 .discount {
   color: #4a6fa5;
 }
-
 .payment-button {
   width: 100%;
   margin-top: 1rem;
   padding: 1.2rem;
   font-size: 1rem;
 }
-
 @media (max-width: 992px) {
   .content-wrapper {
     flex-direction: column;

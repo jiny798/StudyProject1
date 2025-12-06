@@ -83,7 +83,7 @@ import CartRepository from "@/repository/CartRepository.ts";
 import Product from '@/entity/product/Product'
 import Category from '@/entity/product/Category'
 import RequestProduct from '@/entity/order/RequestProduct'
-import {ElMessageBox} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 import AddCart from "@/entity/cart/AddCart.ts";
 const router = useRouter()
 
@@ -157,7 +157,7 @@ const finalSelectedOption = computed(() => {
     if (ptr === undefined) return null
   }
 
-  // 최종 ptr이 id와 stock을 가진 객체인지 확인
+  // 최종 ptr이 id와 stock을 가진 마지막 객체인지 확인
   if (typeof ptr === 'object' && ptr !== null && 'id' in ptr && 'stock' in ptr) {
     console.log('id,stock : ' + ptr.id + ' ' + ptr.stock)
     return ptr as { id: number; stock: number }
@@ -185,7 +185,6 @@ PRODUCT_REPOSITORY.get(props.productId)
     console.log('Server Response:', product)
     state.product = product
 
-    // 이미지가 있다면 첫 번째 이미지를 대표 이미지로 설정
     if (product.productImages && product.productImages.length > 0) {
       imageUrl.value = product.productImages[0]
     }
@@ -212,20 +211,43 @@ const addToCart = () => {
       router.push('/cart')
     })
     .catch(() => {
-      // 사용자가 '계속 쇼핑하기'를 클릭한 경우
+
     })
 }
 
 const buyNow = () => {
-  // if (!validateOptions()) return
+  if (optionSteps.value.length > 0 && !finalOptionId.value) {
+    ElMessage.warning('모든 옵션을 선택해주세요.')
+    return
+  }
 
-  // TODO: 선택한 상품 정보를 결제 페이지의 상태(store)로 전달하는 로직
-  console.log('바로 구매:', {
+  // 2. 품절 체크
+  if (finalStock.value !== null && finalStock.value <= 0) {
+    ElMessage.error('선택하신 상품은 품절되었습니다.')
+    return
+  }
+
+  // 옵션 설명 문자열 생성 (예: "색상: 블랙 / 사이즈: L")
+  const optionDesc = optionSteps.value.map((step, index) => {
+    return `${step.label}: ${selectedValues.value[index]}`
+  }).join(' / ')
+
+  const directBuyItem = {
     productId: state.product.id,
-    options: selectedValues.value
-  })
+    productName: state.product.name,
+    price: state.product.price,
+    quantity: 1,
+    optionId: finalOptionId.value,
+    optionDescription: optionDesc,
+    image: imageUrl.value
+  }
 
-  router.push('/payment')
+  router.push({
+    path: '/payment',
+    state: {
+      selectedItems: [directBuyItem]
+    }
+  })
 }
 
 

@@ -102,7 +102,6 @@ const state = reactive({
   cartResponse: new CartResponse()
 })
 
-// 서버 데이터 fetch
 CART_REPOSITORY.get()
   .then((response) => {
     console.log('Server Response:', response)
@@ -114,9 +113,9 @@ CART_REPOSITORY.get()
     ElMessage.error("장바구니 정보를 불러오는데 실패했습니다.");
   });
 
-// 테이블 참조용 ref
+// 테이블 참조용
 const multipleTableRef = ref<InstanceType<typeof ElTable>>()
-// 선택된 아이템들을 담을 ref (타입은 CartItem 배열)
+// 선택된 아이템들
 const multipleSelection = ref<CartItem[]>([])
 
 // 체크박스 선택 변경 시 호출
@@ -131,7 +130,6 @@ const removeItem = (index: number) => {
   ElMessage.success('상품이 삭제되었습니다.')
 }
 
-// 선택 삭제
 const removeSelectedItems = () => {
   if (multipleSelection.value.length === 0) {
     ElMessage.warning('삭제할 상품을 선택해주세요.')
@@ -139,7 +137,6 @@ const removeSelectedItems = () => {
   }
 
   // 선택되지 않은 항목들만 남기기 (filter)
-  // 실제 프로젝트에서는 선택된 ID들을 모아 서버로 삭제 요청을 보내야 합니다.
   state.cartResponse.cartItems = state.cartResponse.cartItems.filter(
     item => !multipleSelection.value.includes(item)
   )
@@ -160,18 +157,20 @@ const shippingFee = computed(() => {
   return totalSelectedPrice.value >= 50000 ? 0 : 3000
 })
 
-// 최종 결제 금액
 const finalPaymentPrice = computed(() => totalSelectedPrice.value + shippingFee.value)
 
-// 결제 페이지 이동
 const goToPayment = () => {
   if (multipleSelection.value.length === 0) {
     ElMessage.warning('주문할 상품을 선택해주세요.')
     return
   }
-  // 선택된 상품들(multipleSelection.value)을 가지고 결제 페이지로 이동
-  console.log("주문할 상품 목록:", multipleSelection.value);
-  router.push('/payment')
+
+  router.push({
+    path: '/payment',
+    state: {
+      selectedItems: JSON.parse(JSON.stringify(multipleSelection.value))
+    }
+  })
 }
 </script>
 
