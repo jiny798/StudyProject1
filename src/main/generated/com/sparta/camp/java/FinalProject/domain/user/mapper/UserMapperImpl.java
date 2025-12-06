@@ -3,13 +3,12 @@ package com.sparta.camp.java.FinalProject.domain.user.mapper;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserResponse;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserSearchResponse;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
-import java.time.LocalDateTime;
 import javax.annotation.processing.Generated;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-11-23T00:19:00+0900",
+    date = "2025-12-06T22:15:53+0900",
     comments = "version: 1.5.5.Final, compiler: javac, environment: Java 17.0.13 (Eclipse Adoptium)"
 )
 @Component
@@ -37,17 +36,11 @@ public class UserMapperImpl implements UserMapper {
             return null;
         }
 
-        Long id = null;
-        String name = null;
-        String email = null;
-        LocalDateTime createdAt = null;
+        User user1 = null;
 
-        id = user.getId();
-        name = user.getName();
-        email = user.getEmail();
-        createdAt = user.getCreatedAt();
+        user1 = user;
 
-        UserResponse userResponse = new UserResponse( id, name, email, createdAt );
+        UserResponse userResponse = new UserResponse( user1 );
 
         return userResponse;
     }

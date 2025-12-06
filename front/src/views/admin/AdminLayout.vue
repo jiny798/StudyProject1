@@ -24,8 +24,8 @@
             <el-icon><User /></el-icon>
             <span>회원 관리</span>
           </template>
-          <el-menu-item index="/admin/members">회원 목록</el-menu-item>
-          <el-menu-item index="/admin/members/points">적립금 관리</el-menu-item>
+          <el-menu-item index="/admin/users">회원 목록</el-menu-item>
+<!--          <el-menu-item index="/admin/users/points">적립금 관리</el-menu-item>-->
         </el-sub-menu>
 
         <el-sub-menu index="products">
@@ -43,7 +43,7 @@
             <span>쿠폰 관리</span>
           </template>
           <el-menu-item index="/admin/coupons/write">쿠폰 생성</el-menu-item>
-          <el-menu-item index="/admin/coupons/issue">쿠폰 발급</el-menu-item>
+<!--          <el-menu-item index="/admin/coupons/issue">쿠폰 발급</el-menu-item>-->
         </el-sub-menu>
 
         <el-sub-menu index="categories">

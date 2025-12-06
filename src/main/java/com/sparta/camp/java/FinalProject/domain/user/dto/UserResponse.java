@@ -1,6 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.user.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
+import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -19,16 +20,11 @@ public class UserResponse {
 
     LocalDateTime createdAt;
 
-    @QueryProjection
-    public UserResponse(
-            Long id,
-            String name,
-            String email,
-            LocalDateTime createdAt
-    ) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.createdAt = createdAt;
+    public UserResponse(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        this.createdAt = user.getCreatedAt();
     }
+
 }

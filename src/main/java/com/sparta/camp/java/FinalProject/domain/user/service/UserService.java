@@ -2,6 +2,10 @@ package com.sparta.camp.java.FinalProject.domain.user.service;
 
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
+import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
+import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductResponse;
+import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserCreateRequest;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserPasswordUpdateRequest;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserResponse;
@@ -14,9 +18,14 @@ import com.sparta.camp.java.FinalProject.domain.user.repository.UserQueryReposit
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRepository;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +90,12 @@ public class UserService {
     @Transactional
     public void delete(Long userId) {
         userRepository.delete(getUser(userId));
+    }
+
+    public PagingResponse<UserResponse> getUserList(RequestPage requestPage) {
+        Page<User> userPage = userRepository.getList(requestPage);
+        return new PagingResponse<>(userPage, UserResponse.class);
+
     }
 
     private User getUser(Long userId) {
