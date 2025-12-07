@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.coupon.controller.dto;
+package com.sparta.camp.java.FinalProject.domain.coupon.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.CreateCouponRequest;
@@ -6,7 +6,6 @@ import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.Is
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.service.AdminCouponService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

@@ -43,7 +43,7 @@
             <span>쿠폰 관리</span>
           </template>
           <el-menu-item index="/admin/coupons/write">쿠폰 생성</el-menu-item>
-<!--          <el-menu-item index="/admin/coupons/issue">쿠폰 발급</el-menu-item>-->
+          <el-menu-item index="/admin/coupons/issue">쿠폰 목록</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="categories">

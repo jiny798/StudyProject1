@@ -1,5 +1,4 @@
-export default class Coupon {
-  public productId = 0
-  public quantity = 0
-  public optionId = 0
+export default class CouponWrite {
+  public name = 0
+  public description = 0
 }

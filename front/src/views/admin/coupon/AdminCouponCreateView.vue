@@ -222,7 +222,7 @@ const submitCoupon = async () => {
     // JSON 페이로드 확인용 로그
     console.log('Sending Payload:', form)
 
-    await COUPON_REPOSITORY.create(form)
+    await COUPON_REPOSITORY.write(form)
 
     ElMessage.success('쿠폰이 성공적으로 생성되었습니다.')
     router.push('/admin/coupons') // 목록 페이지로 이동
