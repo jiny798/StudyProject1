@@ -107,7 +107,7 @@ public class Coupon {
     }
 
     public void validateTemplate() {
-        if (expirationType == ExpirationType.FIXED_PERIOD) {
+        if (expirationType == ExpirationType.DATE_RANGE) {
             if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
                 throw new ServiceException(ServiceExceptionCode.INVALID_COUPON_DATE_RANGE);
             }

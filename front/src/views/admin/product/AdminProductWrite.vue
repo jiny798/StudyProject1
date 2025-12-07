@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import {ElMessage, type UploadUserFile} from 'element-plus'
-import {onMounted, onBeforeUnmount, ref, reactive, nextTick} from 'vue' // [중요] nextTick 추가
+import {onMounted, onBeforeUnmount, ref, reactive, nextTick} from 'vue'
 import Editor from '@toast-ui/editor'
 import '@toast-ui/editor/dist/toastui-editor.css'
 import ProductWrite from '@/entity/product/ProductWrite.ts'

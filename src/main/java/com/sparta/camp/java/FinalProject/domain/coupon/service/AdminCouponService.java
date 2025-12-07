@@ -71,7 +71,7 @@ public class AdminCouponService {
     private LocalDateTime calculateExpirationDate(Coupon coupon) {
         if (ExpirationType.VALID_DAYS_ON_ISSUE.equals(coupon.getExpirationType())) {
             return LocalDateTime.now().plusDays(coupon.getValidDays());
-        } else if (ExpirationType.FIXED_PERIOD.equals(coupon.getExpirationType())) {
+        } else if (ExpirationType.DATE_RANGE.equals(coupon.getExpirationType())) {
             return coupon.getEndDate();
         }
         throw new ServiceException(ServiceExceptionCode.INVALID_COUPON_EXPIRATION_TYPE);
