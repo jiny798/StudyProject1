@@ -14,6 +14,7 @@ import AdminProductWrite from '@/views/admin/product/AdminProductWrite.vue'
 import AdminProductList from "@/views/admin/product/AdminProductList.vue";
 import AdminUserListView from "@/views/admin/user/AdminUserListView.vue";
 import AdminCouponCreateView from "@/views/admin/coupon/AdminCouponCreateView.vue";
+import AdminCouponList from "@/views/admin/coupon/AdminCouponList.vue";
 
 
 const router = createRouter({
@@ -79,6 +80,9 @@ const router = createRouter({
         {path: 'category/write', name: 'admin-category-write', component: AdminCategoryWriteView},
         {path: 'users', name: 'admin-user-list', component: AdminUserListView},
         {path: 'coupons/write', name: 'admin-coupon-write', component: AdminCouponCreateView},
+        {path: 'coupons/list', name: 'admin-coupon-list', component: AdminCouponList},
+
+
       ],
     },
   ],
