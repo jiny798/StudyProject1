@@ -19,8 +19,17 @@ export default class CouponRepository {
     })
   }
 
-  public get() {
-    return this.httpRepository.get<CartResponse>({path: `/api/cart`}, CartResponse)
+  public update(id: number, request: CouponWrite) {
+    return this.httpRepository.patch({
+      path: `/api/admin/coupons/${id}`,
+      body: request,
+    })
+  }
+
+  public get(id: number): Promise<CouponResponse> {
+    return this.httpRepository.get<CouponResponse>(
+      {path: `/api/admin/coupons/${id}`},
+      CouponResponse)
   }
 
   public getList(page: number) {

@@ -3,6 +3,7 @@ package com.sparta.camp.java.FinalProject.domain.coupon.entity;
 import com.google.gson.stream.JsonWriter;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
+import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.UpdateCouponRequest;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.DiscountType;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.ExpirationType;
 import jakarta.persistence.*;
@@ -96,6 +97,20 @@ public class Coupon {
         this.totalQuantity = totalQuantity;
         this.status = CouponStatus.ACTIVE;
         this.issuedQuantity = 0;
+    }
+
+    public void update(UpdateCouponRequest request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+        this.discountType = request.getDiscountType();
+        this.discountValue = request.getDiscountValue();
+        this.expirationType = request.getExpirationType();
+        this.validDays = request.getValidDays();
+        this.startDate = request.getStartDate();
+        this.endDate = request.getEndDate();
+        this.minOrderAmount = request.getMinOrderAmount();
+        this.maxDiscountAmount = request.getMaxDiscountAmount();
+        this.totalQuantity = request.getTotalQuantity();
     }
 
     public void activate() {

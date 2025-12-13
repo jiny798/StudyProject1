@@ -3,6 +3,7 @@ package com.sparta.camp.java.FinalProject.domain.coupon.controller;
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.CreateCouponRequest;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.IssueCouponRequest;
+import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.UpdateCouponRequest;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponseDto;
 import com.sparta.camp.java.FinalProject.domain.coupon.service.AdminCouponService;
@@ -26,12 +27,23 @@ public class AdminCouponController {
         return ApiResponse.success(response);
     }
 
+    @GetMapping("/{couponId}")
+    public ApiResponse<CouponResponseDto> get(@PathVariable("couponId") Long couponId) {
+        CouponResponseDto response = adminCouponService.getCouponDetails(couponId);
+        return ApiResponse.success(response);
+    }
+
     @GetMapping
     public ApiResponse<PagingResponse<CouponResponseDto>> getList(@ModelAttribute RequestPage requestPage) {
         PagingResponse<CouponResponseDto> response = adminCouponService.getCouponList(requestPage);
         return ApiResponse.success(response);
     }
 
+    @PatchMapping("/{couponId}")
+    public ApiResponse<Void> edit(@PathVariable("couponId") Long couponId, @RequestBody UpdateCouponRequest request) {
+        adminCouponService.updateCoupon(couponId, request);
+        return ApiResponse.success();
+    }
 
     @DeleteMapping("/{couponId}")
     public ApiResponse<CouponResponse> delete(@PathVariable("couponId") Long couponId) {

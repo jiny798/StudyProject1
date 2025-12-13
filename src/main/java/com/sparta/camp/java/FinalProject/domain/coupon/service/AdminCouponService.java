@@ -3,6 +3,7 @@ package com.sparta.camp.java.FinalProject.domain.coupon.service;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.CreateCouponRequest;
+import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.UpdateCouponRequest;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponseDto;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.Coupon;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -40,6 +42,25 @@ public class AdminCouponService {
         Coupon savedCoupon = couponRepository.save(coupon);
 
         return CouponResponse.from(savedCoupon);
+    }
+
+    @Transactional
+    public CouponResponse updateCoupon(Long couponId, UpdateCouponRequest request) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_COUPON));
+
+        // todo: 이미 발급되었으면 막을건지?
+        // if (coupon.getIssuedQuantity() > 0)
+
+        coupon.update(request);
+
+        return CouponResponse.from(coupon);
+    }
+
+    public CouponResponseDto getCouponDetails(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_COUPON));
+        return new CouponResponseDto(coupon);
     }
 
     public PagingResponse<CouponResponseDto> getCouponList(RequestPage requestPage) {
