@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive } from 'vue'
-import UserRepository from '@/repository/UserRepository'
+import UserRepository from '@/repository/user/UserRepository.ts'
 import { container } from 'tsyringe'
-import ProfileRepository from '@/repository/ProfileRepository'
+import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import type UserProfile from '@/entity/user/UserProfile'
 
 const USER_REPOSITORY = container.resolve(UserRepository)

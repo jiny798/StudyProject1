@@ -16,6 +16,7 @@ import AdminUserListView from "@/views/admin/user/AdminUserListView.vue";
 import AdminCouponCreateView from "@/views/admin/coupon/AdminCouponCreateView.vue";
 import AdminCouponList from "@/views/admin/coupon/AdminCouponList.vue";
 import AdminCouponEditView from "@/views/admin/coupon/AdminCouponEditView.vue";
+import AdminOrderList from "@/views/admin/order/AdminOrderList.vue";
 
 
 const router = createRouter({
@@ -76,14 +77,14 @@ const router = createRouter({
       name: 'admin',
       component: AdminLayout,
       children: [
+        {path: 'category/write', name: 'admin-category-write', component: AdminCategoryWriteView},
         {path: 'products/write', name: 'admin-product-write', component: AdminProductWrite},
         {path: 'products', name: 'admin-product-list', component: AdminProductList},
-        {path: 'category/write', name: 'admin-category-write', component: AdminCategoryWriteView},
         {path: 'users', name: 'admin-user-list', component: AdminUserListView},
         {path: 'coupons/write', name: 'admin-coupon-write', component: AdminCouponCreateView},
         {path: 'coupon/edit/:couponId', name: 'admin-coupon-edit', component: AdminCouponEditView},
         {path: 'coupons/list', name: 'admin-coupon-list', component: AdminCouponList},
-
+        {path: 'orders', name: 'admin-orders-list', component: AdminOrderList},
       ],
     },
   ],

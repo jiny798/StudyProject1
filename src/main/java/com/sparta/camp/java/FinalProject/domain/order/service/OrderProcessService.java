@@ -4,7 +4,7 @@ import com.sparta.camp.java.FinalProject.common.enums.OrderStatus;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.coupon.service.CouponService;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.OrderProductRequestDto;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderProductRequestDto;
 import com.sparta.camp.java.FinalProject.domain.order.entity.Order;
 import com.sparta.camp.java.FinalProject.domain.order.entity.OrderProduct;
 import com.sparta.camp.java.FinalProject.domain.order.repository.OrderProductRepository;
@@ -45,7 +45,7 @@ public class OrderProcessService {
         BigDecimal finalTotalPrice = originalTotalPrice;
 
         BigDecimal discountAmount = BigDecimal.ZERO;
-        if (userCouponId != null) {
+        if (userCouponId != null && userCouponId > 0) {
             finalTotalPrice = couponService.applyDiscountAndMarkAsUsed(
                     user.getId(),
                     userCouponId,

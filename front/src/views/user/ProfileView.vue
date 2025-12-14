@@ -80,10 +80,10 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref } from 'vue'
 import { container } from 'tsyringe'
-import OrderRepository from '@/repository/OrderRepository'
+import OrderRepository from '@/repository/user/OrderRepository.ts'
 import UserProfile from '@/entity/user/UserProfile'
-import ResponseOrderProduct from '@/entity/order/OrderProduct'
-import ProfileRepository from '@/repository/ProfileRepository'
+import ResponseOrderProduct from '@/entity/order/user/OrderProductRequest.ts'
+import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
 const PROFILE_REPOSITORY = container.resolve(ProfileRepository)

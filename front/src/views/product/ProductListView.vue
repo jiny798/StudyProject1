@@ -38,7 +38,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import Paging from '@/entity/data/Paging'
 import type Product from '@/entity/product/Product'
-import ProductRepository from '@/repository/ProductRepository'
+import ProductRepository from '@/repository/user/ProductRepository.ts'
 import { container } from 'tsyringe'
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)

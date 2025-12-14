@@ -156,7 +156,7 @@ import { container } from 'tsyringe'
 import { ElMessage } from 'element-plus'
 import { DateTimeFormatter, LocalDateTime } from '@js-joda/core'
 // CouponRepository 가정 (실제 파일 경로에 맞게 수정)
-import CouponRepository from '@/repository/CouponRepository.ts'
+import CouponRepository from '@/repository/user/CouponRepository.ts'
 import ProductWrite from "@/entity/product/ProductWrite.ts";
 import type Category from "@/entity/product/Category.ts";
 import CouponWrite from "@/entity/coupon/CouponWrite.ts";

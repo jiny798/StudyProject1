@@ -1,7 +1,7 @@
-import AxiosHttpClient, { type HttpRequestConfig } from '@/http/AxiosHttpClient'
+import AxiosHttpClient, { type HttpRequestConfig } from '@/http/AxiosHttpClient.ts'
 import { inject, singleton } from 'tsyringe'
 import { plainToInstance } from 'class-transformer'
-import Paging from '@/entity/data/Paging'
+import Paging from '@/entity/data/Paging.ts'
 
 @singleton()
 export default class HttpRepository {

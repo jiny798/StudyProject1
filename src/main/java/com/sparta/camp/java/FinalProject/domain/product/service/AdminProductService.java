@@ -107,7 +107,7 @@ public class AdminProductService {
         return createdOptions;
     }
 
-    public ProductDetailResponse get(Long id) {
+    public ProductDetailResponse getProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_PRODUCT));
 
@@ -117,7 +117,7 @@ public class AdminProductService {
         return new ProductDetailResponse(product, optionsMap);
     }
 
-    public PagingResponse<ProductResponse> getList(RequestPage requestPage) {
+    public PagingResponse<ProductResponse> getProductList(RequestPage requestPage) {
         Page<Product> postPage = productRepository.getList(requestPage);
         return new PagingResponse<>(postPage, ProductResponse.class);
     }

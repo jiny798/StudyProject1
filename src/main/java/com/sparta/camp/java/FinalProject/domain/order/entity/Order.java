@@ -49,7 +49,7 @@ public class Order {
     String shippingAddress;
 
     @Getter
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<OrderProduct> orderProducts = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)

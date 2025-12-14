@@ -42,12 +42,12 @@ public class AdminProductController {
 
     @GetMapping("/products/{postId}")
     public ApiResponse<ProductDetailResponse> get(@PathVariable(name = "postId") Long postId) throws Exception {
-        return ApiResponse.success(adminProductService.get(postId));
+        return ApiResponse.success(adminProductService.getProduct(postId));
     }
 
     @GetMapping("/products")
     public ApiResponse<PagingResponse<ProductResponse>> getList(@ModelAttribute RequestPage requestPage) throws Exception {
-        return ApiResponse.success(adminProductService.getList(requestPage));
+        return ApiResponse.success(adminProductService.getProductList(requestPage));
     }
 
 

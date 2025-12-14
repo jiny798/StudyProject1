@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.order.controller.dto;
+package com.sparta.camp.java.FinalProject.domain.order.controller.dto.request;
 
 import lombok.AccessLevel;
 import lombok.Getter;

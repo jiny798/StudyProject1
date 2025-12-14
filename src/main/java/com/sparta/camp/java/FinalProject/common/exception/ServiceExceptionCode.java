@@ -52,7 +52,8 @@ public enum ServiceExceptionCode {
 
     //Order
     NOT_FOUND_ORDER(404, "유효하지 않은 주문입니다."),
-    CANCEL_FAIL(400, "주문을 취소할 수 없습니다.");
+    CANCEL_FAIL(400, "주문을 취소할 수 없습니다."),
+    ALREADY_CANCELED_ORDER(400, "이미 취소된 주문입니다.");
 
 
     final int statusCode;

@@ -41,8 +41,8 @@ import { onBeforeMount, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import type UserProfile from '@/entity/user/UserProfile'
-import UserRepository from '@/repository/UserRepository'
-import ProfileRepository from '@/repository/ProfileRepository'
+import UserRepository from '@/repository/user/UserRepository.ts'
+import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import { Umbrella } from '@element-plus/icons-vue' // 사용 안 하는 아이콘 제거
 
 const USER_REPOSITORY = container.resolve(UserRepository)

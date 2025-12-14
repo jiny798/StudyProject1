@@ -1,9 +1,9 @@
-import HttpRepository from '@/repository/HttpRepository'
-import type Login from '@/entity/user/Login'
+import HttpRepository from '@/repository/user/HttpRepository.ts'
+import type Login from '@/entity/user/Login.ts'
 import { inject, singleton } from 'tsyringe'
-import type ProductWrite from '@/entity/product/ProductWrite'
-import Product from '@/entity/product/Product'
-import Paging from '@/entity/data/Paging'
+import type ProductWrite from '@/entity/product/ProductWrite.ts'
+import Product from '@/entity/product/Product.ts'
+import Paging from '@/entity/data/Paging.ts'
 
 @singleton()
 export default class ProductRepository {

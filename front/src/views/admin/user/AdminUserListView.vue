@@ -72,8 +72,8 @@ import { ElMessage } from 'element-plus'
 
 import User from '@/entity/user/UserProfile.ts'
 import Coupon from '@/entity/coupon/Coupon.ts' // Coupon 엔티티 필요
-import UserRepository from '@/repository/UserRepository.ts'
-import CouponRepository from '@/repository/CouponRepository.ts' // Coupon 리포지토리 필요
+import UserRepository from '@/repository/user/UserRepository.ts'
+import CouponRepository from '@/repository/user/CouponRepository.ts' // Coupon 리포지토리 필요
 import Paging from "@/entity/data/Paging.ts";
 
 // --- 기존 로직 ---

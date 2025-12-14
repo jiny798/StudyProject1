@@ -76,13 +76,12 @@
 import {ref, reactive, defineProps, computed} from 'vue'
 import {container} from 'tsyringe'
 import { useRouter } from 'vue-router'
-import ProductRepository from '@/repository/ProductRepository'
-import CategoryRepository from '@/repository/CategoryRepository'
-import OrderRepository from '@/repository/OrderRepository'
-import CartRepository from "@/repository/CartRepository.ts";
+import ProductRepository from '@/repository/user/ProductRepository.ts'
+import CategoryRepository from '@/repository/user/CategoryRepository.ts'
+import OrderRepository from '@/repository/user/OrderRepository.ts'
+import CartRepository from "@/repository/user/CartRepository.ts";
 import Product from '@/entity/product/Product'
 import Category from '@/entity/product/Category'
-import RequestProduct from '@/entity/order/RequestProduct'
 import {ElMessage, ElMessageBox} from "element-plus";
 import AddCart from "@/entity/cart/AddCart.ts";
 const router = useRouter()
@@ -94,18 +93,16 @@ const ORDER_REPOSITORY = container.resolve(OrderRepository)
 const CART_REPOSITORY = container.resolve(CartRepository)
 
 const activeTab = ref('detail')
-const imageUrl = ref('/g1.JPG') // 기본 이미지 (필요시 productImages[0]으로 교체 가능)
+const imageUrl = ref('/g1.JPG')
 
 const props = defineProps<{ productId: number }>()
 
 const state = reactive({
   product: new Product(),
   category: new Category(),
-  requestProduct: new RequestProduct(),
   addCart: new AddCart()
 })
 
-// 사용자가 선택한 값들을 저장 (예: ["블랙", "라지"])
 const selectedValues = ref<string[]>([])
 
 const optionSteps = computed(() => {
@@ -115,7 +112,7 @@ const optionSteps = computed(() => {
   }
 
   let currentPointer: any = state.product.options
-  for (let i = 0; i < 10; i++) { // 무한 루프 방지
+  for (let i = 0; i < 10; i++) { // 무한 루프 방지 todo: 옵션 최대개수 정해지면 수정 필요
     const keys = Object.keys(currentPointer)
     if (keys.length === 0) break
 
@@ -179,7 +176,6 @@ function onOptionSelect(event: Event, index: number) {
   selectedValues.value = newSelection
 }
 
-// 데이터 로드
 PRODUCT_REPOSITORY.get(props.productId)
   .then((product) => {
     console.log('Server Response:', product)

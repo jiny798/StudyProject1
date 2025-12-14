@@ -81,16 +81,21 @@
     </el-card>
   </div>
 </template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
-import type { CartItem } from "@/entity/cart/CartResponse.ts"; // 타입 import
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { container } from 'tsyringe'
+
+// --- 엔티티 & 리포지토리 Import ---
+import type { CartItem } from "@/entity/cart/CartResponse.ts"
+import OrderRepository from '@/repository/user/OrderRepository.ts'
+import OrderRequest from "@/entity/order/user/OrderRequest.ts"
+import OrderProductRequest from "@/entity/order/user/OrderProductRequest.ts"
 
 const router = useRouter()
+const ORDER_REPOSITORY = container.resolve(OrderRepository)
 
-// 넘어온 데이터를 담을 변수
 const cartItems = ref<CartItem[]>([])
 
 const shippingInfo = ref({
@@ -99,24 +104,24 @@ const shippingInfo = ref({
   address: '서울시 강남구 테헤란로'
 })
 
-const totalDiscount = ref(0) // 지금은 0원 처리
+const totalDiscount = ref(0)
 
-// ★★★ [핵심] 페이지 로드 시 데이터 수신 ★★★
+const state = reactive({
+  orderRequest: new OrderRequest()
+})
+
 onMounted(() => {
-  // history.state에서 장바구니에서 넘긴 데이터를 꺼냅니다.
   const receivedData = history.state.selectedItems
 
-  // 데이터가 없으면(URL 직접 입력해서 들어온 경우) 장바구니로 돌려보냄
   if (!receivedData || receivedData.length === 0) {
-    ElMessage.error('주문할 상품 정보가 없습니다.')
-    router.replace('/cart') // 뒤로가기 방지를 위해 replace 사용
+    ElMessage.warning('주문할 상품 정보가 없습니다.')
+    router.replace('/cart')
     return
   }
 
   cartItems.value = receivedData
 })
 
-// 계산 로직 (받아온 cartItems 기반으로 자동 계산)
 const totalProductPrice = computed(() =>
   cartItems.value.reduce((sum, item) => sum + (item.price * item.quantity), 0)
 )
@@ -130,26 +135,43 @@ const finalPaymentPrice = computed(
   () => totalProductPrice.value + shippingFee.value - totalDiscount.value
 )
 
-const onPayment = () => {
+const onPayment = async () => {
   if (cartItems.value.length === 0) return
 
-  // 결제 요청 데이터 준비
-  const paymentData = {
-    items: cartItems.value.map(item => ({
-      id: item.cartItemId, // 혹은 productId
-      quantity: item.quantity
-    })),
-    amount: finalPaymentPrice.value,
-    shipping: shippingInfo.value
+  if (!shippingInfo.value.address || !shippingInfo.value.recipient) {
+    ElMessage.warning('배송지 정보를 모두 입력해주세요.')
+    return
   }
 
-  console.log("결제 요청 데이터:", paymentData)
-  ElMessage.success('결제 API 연동 예정입니다.')
+  try {
+    state.orderRequest.products = cartItems.value.map(item => {
+      const productReq = new OrderProductRequest()
+      productReq.productId = item.productId
+      productReq.quantity = item.quantity
+      productReq.productOptionId = item.optionId ?? 0
+      return productReq
+    })
+
+    state.orderRequest.shippingAddress = `(${shippingInfo.value.recipient}/${shippingInfo.value.phone}) ${shippingInfo.value.address}`
+    state.orderRequest.userCouponId = 0
+
+    await ORDER_REPOSITORY.order(state.orderRequest)
+
+    await ElMessageBox.alert('주문이 성공적으로 완료되었습니다.', '알림', {
+      confirmButtonText: '확인',
+      callback: () => {
+        router.replace('/')
+      }
+    })
+
+  } catch (e: any) {
+    console.error(e)
+    ElMessage.error('주문 처리에 실패했습니다.')
+  }
 }
 </script>
 
 <style scoped>
-/* 스타일은 기존 PaymentView 스타일 그대로 유지 */
 .payment-container {
   padding: 2rem;
   background-color: #f4f6f9;

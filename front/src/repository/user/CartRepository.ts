@@ -1,5 +1,5 @@
 import {inject, singleton} from 'tsyringe'
-import HttpRepository from '@/repository/HttpRepository'
+import HttpRepository from '@/repository/user/HttpRepository.ts'
 import AddCart from '@/entity/cart/AddCart.ts'
 import Product from "@/entity/product/Product.ts";
 import CartResponse from "@/entity/cart/CartResponse.ts";
@@ -19,5 +19,6 @@ export default class CartRepository {
   public get() {
     return this.httpRepository.get<CartResponse>({path: `/api/cart`}, CartResponse)
   }
+
 
 }

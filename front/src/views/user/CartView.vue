@@ -90,7 +90,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElTable } from 'element-plus'
 import { Delete } from '@element-plus/icons-vue'
 
-import CartRepository from "@/repository/CartRepository.ts";
+import CartRepository from "@/repository/user/CartRepository.ts";
 import { container } from "tsyringe";
 import CartResponse, { CartItem } from "@/entity/cart/CartResponse.ts"; // CartItem 타입 import 필요
 

@@ -1,4 +1,4 @@
-package com.sparta.camp.java.FinalProject.domain.order.controller.dto;
+package com.sparta.camp.java.FinalProject.domain.order.controller.dto.request;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
@@ -7,9 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

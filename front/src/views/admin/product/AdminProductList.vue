@@ -72,7 +72,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Picture } from '@element-plus/icons-vue'
 
 import Product from '@/entity/product/Product.ts'
-import ProductRepository from '@/repository/ProductRepository.ts'
+import ProductRepository from '@/repository/user/ProductRepository.ts'
 import Paging from "@/entity/data/Paging.ts";
 
 interface State {

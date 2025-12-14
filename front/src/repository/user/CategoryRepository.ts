@@ -1,6 +1,6 @@
 import {inject, singleton} from 'tsyringe'
-import HttpRepository from '@/repository/HttpRepository'
-import Category from '@/entity/product/Category'
+import HttpRepository from '@/repository/user/HttpRepository.ts'
+import Category from '@/entity/product/Category.ts'
 import type CategoryWrite from "@/entity/product/CategoryWrite.ts";
 
 @singleton()

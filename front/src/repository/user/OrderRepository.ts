@@ -1,35 +1,17 @@
 import { inject, singleton } from 'tsyringe'
-import HttpRepository from '@/repository/HttpRepository'
-import type RequestProduct from '@/entity/order/RequestProduct'
-import ProductInCart from '@/entity/order/ProductInCart'
-import type RequestOrder from '@/entity/order/RequestOrder'
-import ResponseOrderProduct from '@/entity/order/OrderProduct'
-import OrderProduct from '@/entity/order/OrderProduct'
+import HttpRepository from '@/repository/user/HttpRepository.ts'
+import ProductInCart from '@/entity/order/user/ProductInCart.ts'
+import type OrderRequest from '@/entity/order/user/OrderRequest.ts'
+import ResponseOrderProduct from '@/entity/order/user/OrderProductRequest.ts'
+import OrderProduct from '@/entity/order/user/OrderProductRequest.ts'
 
 @singleton()
 export default class OrderRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {}
 
-  // 장바구니 담기
-  public addCart(request: RequestProduct) {
+  public order(request: OrderRequest) {
     return this.httpRepository.post({
-      path: '/api/cart',
-      body: request,
-    })
-  }
-
-  public getCart() {
-    return this.httpRepository.getAll<ProductInCart>(
-      {
-        path: '/api/cart',
-      },
-      ProductInCart,
-    )
-  }
-
-  public order(request: RequestOrder) {
-    return this.httpRepository.post({
-      path: '/api/order',
+      path: '/api/orders',
       body: request,
     })
   }

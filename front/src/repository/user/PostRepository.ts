@@ -1,7 +1,7 @@
-import HttpRepository from '@/repository/HttpRepository'
+import HttpRepository from '@/repository/user/HttpRepository.ts'
 import { inject, singleton } from 'tsyringe'
-import type PostWrite from '@/entity/post/PostWrite'
-import Post from '@/entity/post/Post'
+import type PostWrite from '@/entity/post/PostWrite.ts'
+import Post from '@/entity/post/Post.ts'
 
 @singleton()
 export default class PostRepository {
@@ -21,7 +21,7 @@ export default class PostRepository {
   public getList(page: number) {
     return this.httpRepository.getList<Post>(
       {
-        path: `/api/posts?page=${page}&size=3`,
+        path: `/api/posts?page=${page}&size=10`,
       },
       Post,
     )

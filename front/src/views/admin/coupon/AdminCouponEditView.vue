@@ -165,7 +165,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { container } from 'tsyringe'
 import { ElMessage } from 'element-plus'
 import { LocalDateTime } from '@js-joda/core'
-import CouponRepository from '@/repository/CouponRepository.ts'
+import CouponRepository from '@/repository/user/CouponRepository.ts'
 import CouponWrite from "@/entity/coupon/CouponWrite.ts";
 
 const router = useRouter()

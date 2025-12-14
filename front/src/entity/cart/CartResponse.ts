@@ -9,5 +9,6 @@ export class CartItem {
   public productName: string = "";
   public quantity: number = 0;
   public price: number = 0;
+  public optionId: number = 0;
   public optionDescription: string = "";
 }

@@ -4,7 +4,7 @@ import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderDetailResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.OrderRequest;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderRequest;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCompleteResponse;
 import com.sparta.camp.java.FinalProject.domain.order.service.OrderService;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;

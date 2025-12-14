@@ -50,23 +50,20 @@ import { reactive, ref } from 'vue'
 import Login from '@/entity/user/Login'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import type HttpError from '@/http/HttpError'
-import UserRepository from '@/repository/UserRepository'
+import UserRepository from '@/repository/user/UserRepository.ts'
 import { container } from 'tsyringe'
-import { User, Lock } from '@element-plus/icons-vue' // 아이콘 사용 시
+import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const USER_REPOSITORY = container.resolve(UserRepository)
 
-// Java의 DTO와 연결되는 객체
 const state = reactive({
   login: new Login(),
 })
 
-// Form Ref (Validation용)
 const formRef = ref<FormInstance>()
 
-// Validation Rules (Java의 @Valid 역할)
 const rules = reactive<FormRules>({
   email: [
     { required: true, message: '이메일을 입력해주세요.', trigger: 'blur' },

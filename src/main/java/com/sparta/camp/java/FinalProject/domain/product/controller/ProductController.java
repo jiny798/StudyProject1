@@ -18,12 +18,12 @@ public class ProductController {
 
     @GetMapping("/{productId}")
     public ApiResponse<ProductDetailResponse> get(@PathVariable("productId") Long productId) {
-        return ApiResponse.success(adminProductService.get(productId));
+        return ApiResponse.success(adminProductService.getProduct(productId));
     }
 
     @GetMapping("/products")
     public ApiResponse<PagingResponse<ProductResponse>> getList(@ModelAttribute RequestPage requestPage) throws Exception {
-        return ApiResponse.success(adminProductService.getList(requestPage));
+        return ApiResponse.success(adminProductService.getProductList(requestPage));
     }
 
 }

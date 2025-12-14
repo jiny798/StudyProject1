@@ -91,7 +91,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import CouponRepository from '@/repository/CouponRepository.ts'
+import CouponRepository from '@/repository/user/CouponRepository.ts'
 import CouponResponse from "@/entity/coupon/Coupon.ts"
 
 const router = useRouter()

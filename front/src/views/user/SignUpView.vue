@@ -51,7 +51,7 @@ import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import Signup from '@/entity/user/Signup' // 새로 만든 클래스
-import UserRepository from '@/repository/UserRepository'
+import UserRepository from '@/repository/user/UserRepository.ts'
 import type HttpError from '@/http/HttpError'
 
 const router = useRouter()

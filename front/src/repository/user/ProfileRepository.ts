@@ -1,4 +1,4 @@
-import UserProfile from '@/entity/user/UserProfile'
+import UserProfile from '@/entity/user/UserProfile.ts'
 import { instanceToPlain, plainToInstance } from 'class-transformer'
 import { singleton } from 'tsyringe'
 
