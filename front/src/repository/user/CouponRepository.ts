@@ -6,6 +6,7 @@ import CartResponse from "@/entity/cart/CartResponse.ts";
 import type CouponWrite from "@/entity/coupon/CouponWrite.ts";
 import Post from "@/entity/post/Post.ts";
 import CouponResponse from "@/entity/coupon/Coupon.ts";
+import type IssueCouponRequest from "@/entity/coupon/IssueCouponRequest.ts";
 
 @singleton()
 export default class CouponRepository {
@@ -39,6 +40,13 @@ export default class CouponRepository {
       },
       CouponResponse,
     )
+  }
+
+  public issue(request: IssueCouponRequest) {
+    return this.httpRepository.post({
+      path: '/api/admin/coupons/issue',
+      body: request,
+    })
   }
 
 }

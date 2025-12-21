@@ -66,37 +66,38 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, ref } from 'vue'
-import { container } from 'tsyringe'
-import { ElMessage } from 'element-plus'
+import {onMounted, reactive, ref} from 'vue'
+import {container} from 'tsyringe'
+import {ElMessage} from 'element-plus'
 
 import User from '@/entity/user/UserProfile.ts'
-import Coupon from '@/entity/coupon/Coupon.ts' // Coupon 엔티티 필요
+import CouponResponse from '@/entity/coupon/Coupon.ts'
 import UserRepository from '@/repository/user/UserRepository.ts'
 import CouponRepository from '@/repository/user/CouponRepository.ts' // Coupon 리포지토리 필요
 import Paging from "@/entity/data/Paging.ts";
+import IssueCouponRequest from "@/entity/coupon/IssueCouponRequest.ts";
 
 // --- 기존 로직 ---
 const state = reactive({
   userPage: new Paging<User>(),
+  issueCouponRequest: new IssueCouponRequest()
 })
 const loading = ref(false)
 const USER_REPOSITORY = container.resolve(UserRepository)
 const COUPON_REPOSITORY = container.resolve(CouponRepository)
 
-// --- [추가] 쿠폰 모달 관련 상태 ---
+// 쿠폰 모달 관련 상태 ---
 const couponDialogVisible = ref(false)
 const sending = ref(false)
 const targetUser = ref<User | null>(null) // 쿠폰 받을 유저
 const selectedCouponId = ref<number | null>(null) // 선택된 쿠폰 ID
-const couponList = ref<Coupon[]>([]) // 선택 가능한 쿠폰 목록
+const couponList = ref<CouponResponse[]>([]) // 선택 가능한 쿠폰 목록
 
 // 회원 목록 조회
 const getList = async (page = 1) => {
   loading.value = true
   try {
-    const response = await USER_REPOSITORY.getList(page)
-    state.userPage = response
+    state.userPage = await USER_REPOSITORY.getList(page)
   } catch (e) {
     ElMessage.error('회원 목록 로드 실패')
   } finally {
@@ -104,20 +105,17 @@ const getList = async (page = 1) => {
   }
 }
 
-// ★★★ [추가] 쿠폰 목록 불러오기 (모달 띄우기 전 혹은 띄울 때)
 const loadCoupons = async () => {
   try {
     // 발급 가능한 쿠폰 전체 목록을 가져오는 API 호출 (Paging 없이 전체 리스트)
     // 예: GET /api/admin/coupons/active
-    const response = await COUPON_REPOSITORY.getActiveList()
-    couponList.value = response
+    couponList.value = (await COUPON_REPOSITORY.getList(1)).items
   } catch (e) {
     console.error(e)
     ElMessage.error('쿠폰 목록을 불러오지 못했습니다.')
   }
 }
 
-// ★★★ [추가] 쿠폰 지급 모달 열기
 const openCouponModal = async (user: User) => {
   targetUser.value = user
   selectedCouponId.value = null // 초기화
@@ -129,7 +127,7 @@ const openCouponModal = async (user: User) => {
   }
 }
 
-// ★★★ [추가] 실제 지급 API 호출
+// 실제 지급 API 호출
 const giveCoupon = async () => {
   if (!targetUser.value || !selectedCouponId.value) {
     ElMessage.warning('쿠폰을 선택해주세요.')
@@ -138,14 +136,10 @@ const giveCoupon = async () => {
 
   sending.value = true
   try {
-    // 요청하신 JSON 구조: { "userId": 1, "couponId": 1 }
-    const payload = {
-      userId: targetUser.value.id,
-      couponId: selectedCouponId.value
-    }
+    state.issueCouponRequest.userId =  targetUser.value.id
+    state.issueCouponRequest.couponId =  selectedCouponId.value
 
-    // API 호출: POST /api/user-coupons (가정)
-    await COUPON_REPOSITORY.assignToUser(payload)
+    await COUPON_REPOSITORY.issue(state.issueCouponRequest)
 
     ElMessage.success(`${targetUser.value.name}님에게 쿠폰을 지급했습니다.`)
     couponDialogVisible.value = false
