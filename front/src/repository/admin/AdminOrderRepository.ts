@@ -1,6 +1,5 @@
 import{ inject, singleton } from 'tsyringe'
 import HttpRepository from '@/repository/user/HttpRepository.ts'
-import type RequestProduct from '@/entity/order/user/RequestProduct.ts'
 import ProductInCart from '@/entity/order/user/ProductInCart.ts'
 import type OrderRequest from '@/entity/order/user/OrderRequest.ts'
 import ResponseOrderProduct from '@/entity/order/user/OrderProductRequest.ts'
@@ -19,7 +18,7 @@ export default class AdminOrderRepository {
   }
 
   public getOrders(page: number) {
-    return this.httpRepository.getAll<AdminOrderSummary>(
+    return this.httpRepository.getList<AdminOrderSummary>(
       {
         path: `/api/admin/orders?page=${page}&size=10`,
       },

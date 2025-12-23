@@ -2,11 +2,13 @@ package com.sparta.camp.java.FinalProject.domain.order.controller.dto.response;
 
 import com.sparta.camp.java.FinalProject.domain.order.entity.OrderProduct;
 import com.sparta.camp.java.FinalProject.domain.product.entity.ProductOption;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AdminOrderProductDto {
     private String productName;
     private String optionName; // 옵션이 없으면 null or ""

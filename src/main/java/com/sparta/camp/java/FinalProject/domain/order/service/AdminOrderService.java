@@ -27,8 +27,8 @@ public class AdminOrderService {
      */
     public PagingResponse<AdminOrderSummaryResponse> getOrderList(RequestPage requestPage) {
         Page<Order> orderPage = orderRepository.findAllWithUser(requestPage.getPageable());
-        Page<AdminOrderSummaryResponse> orderSummaryPage = orderPage.map(AdminOrderSummaryResponse::from);
-        return new PagingResponse<>(orderSummaryPage, AdminOrderSummaryResponse.class);
+//        Page<AdminOrderSummaryResponse> orderSummaryPage = orderPage.map(AdminOrderSummaryResponse::from);
+        return new PagingResponse<>(orderPage, AdminOrderSummaryResponse.class);
     }
 
     public AdminOrderSummaryResponse getOrderDetail(Long orderId) {

@@ -99,9 +99,8 @@ const ORDER_REPOSITORY = container.resolve(AdminOrderRepository)
 const getList = async (page = 1) => {
   loading.value = true
   try {
-    // Repository의 getOrders 호출 (페이지 번호 전달)
-    const responsePage = await ORDER_REPOSITORY.getOrders(page)
-    state.orderPage = responsePage
+    state.orderPage = await ORDER_REPOSITORY.getOrders(page)
+
   } catch (e: any) {
     console.error(e)
     ElMessage.error('주문 목록을 불러오지 못했습니다.')
