@@ -10,19 +10,28 @@ import AdminOrderSummary from "@/entity/order/admin/AdminOrderSummary.ts";
 export default class AdminOrderRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {}
 
-  public order(request: OrderRequest) {
-    return this.httpRepository.post({
-      path: '/api/order',
-      body: request,
-    })
-  }
-
-  public getOrders(page: number) {
+  public getOrders(page: number, status: string) {
     return this.httpRepository.getList<AdminOrderSummary>(
       {
-        path: `/api/admin/orders?page=${page}&size=10`,
+        path: `/api/admin/orders?page=${page}&size=10&status=${status}`,
       },
       AdminOrderSummary,
+    )
+  }
+
+  public startDelivery(orderId: number) {
+    return this.httpRepository.post(
+      {
+        path: `/api/admin/orders/${orderId}/start-delivery`,
+      }
+    )
+  }
+
+  public completeDelivery(orderId: number) {
+    return this.httpRepository.post(
+      {
+        path: `/api/admin/orders/${orderId}/complete-delivery`,
+      }
     )
   }
 

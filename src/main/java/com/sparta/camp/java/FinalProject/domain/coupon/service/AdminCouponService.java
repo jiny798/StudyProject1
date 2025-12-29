@@ -11,9 +11,8 @@ import com.sparta.camp.java.FinalProject.domain.coupon.entity.UserCoupon;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.type.ExpirationType;
 import com.sparta.camp.java.FinalProject.domain.coupon.repository.CouponRepository;
 import com.sparta.camp.java.FinalProject.domain.coupon.repository.UserCouponRepository;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductResponse;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import com.sparta.camp.java.FinalProject.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional

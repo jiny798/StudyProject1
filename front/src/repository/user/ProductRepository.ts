@@ -29,6 +29,15 @@ export default class ProductRepository {
     )
   }
 
+  public getListByCategory(page: number, categoryId: number) {
+    return this.httpRepository.getList<Product>(
+      {
+        path: `/api/products?page=${page}&size=10&categoryId=${categoryId}`,
+      },
+      Product,
+    )
+  }
+
   public delete(productId: number) {
     return this.httpRepository.delete({
       path: `/api/admin/products/${productId}`,

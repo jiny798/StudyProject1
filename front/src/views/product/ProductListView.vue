@@ -8,7 +8,7 @@
       <li v-for="product in state.productPage.items" :key="product.id" class="product-item">
         <div class="thumbnail">
           <a @click="goProductDetail(product.id)" style="cursor: pointer">
-            <img :src="product.productImages?.[0]" class="product-image" alt="상품 이미지" />
+            <img :src="product.productImages?.[0]" class="product-image" alt="상품 이미지"/>
           </a>
         </div>
         <div class="description">
@@ -34,18 +34,20 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import {onMounted, reactive, ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
 import Paging from '@/entity/data/Paging'
 import type Product from '@/entity/product/Product'
 import ProductRepository from '@/repository/user/ProductRepository.ts'
-import { container } from 'tsyringe'
+import {container} from 'tsyringe'
+
+const route = useRoute()
 
 const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
 const router = useRouter()
 const categoryTitle = ref('전체 상품') // 여기서 동적으로 변경 가능
 function goProductDetail(productId: number) {
-  router.push({ name: 'product', params: { productId } })
+  router.push({name: 'product', params: {productId}})
 }
 
 type StateType = {
@@ -57,7 +59,8 @@ const state = reactive<StateType>({
 })
 
 function getList(page = 1) {
-  PRODUCT_REPOSITORY.getList(page).then((responsePage) => {
+  const categoryId = route.query.categoryId ? Number(route.query.categoryId) : undefined
+  PRODUCT_REPOSITORY.getListByCategory(page, categoryId).then((responsePage) => {
     state.productPage = responsePage
     console.log(responsePage)
   })
@@ -66,6 +69,14 @@ function getList(page = 1) {
 onMounted(() => {
   getList()
 })
+
+watch(
+  () => route.query.categoryId,
+  (newId, oldId) => {
+    getList(1);
+  }
+);
+
 </script>
 
 <style scoped>

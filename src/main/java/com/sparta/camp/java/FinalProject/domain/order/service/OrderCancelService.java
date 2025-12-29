@@ -59,7 +59,7 @@ public class OrderCancelService {
     }
 
     private void validatePurchaseStatus(Order order) {
-        if (order.getStatus() != OrderStatus.PENDING) {
+        if (order.getStatus() != OrderStatus.DELIVERY) {
             throw new ServiceException(ServiceExceptionCode.CANCEL_FAIL);
         }
         order.setStatus(OrderStatus.CANCELED);

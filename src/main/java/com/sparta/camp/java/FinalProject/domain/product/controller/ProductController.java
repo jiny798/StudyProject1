@@ -1,7 +1,8 @@
 package com.sparta.camp.java.FinalProject.domain.product.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
+import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.ProductSearchCondition;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductDetailResponse;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductResponse;
@@ -21,8 +22,8 @@ public class ProductController {
         return ApiResponse.success(adminProductService.getProduct(productId));
     }
 
-    @GetMapping("/products")
-    public ApiResponse<PagingResponse<ProductResponse>> getList(@ModelAttribute RequestPage requestPage) throws Exception {
+    @GetMapping()
+    public ApiResponse<PagingResponse<ProductResponse>> getList(@ModelAttribute ProductSearchCondition requestPage) throws Exception {
         return ApiResponse.success(adminProductService.getProductList(requestPage));
     }
 

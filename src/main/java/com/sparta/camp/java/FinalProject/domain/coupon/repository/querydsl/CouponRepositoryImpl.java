@@ -2,9 +2,7 @@ package com.sparta.camp.java.FinalProject.domain.coupon.repository.querydsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.camp.java.FinalProject.domain.coupon.entity.Coupon;
-import com.sparta.camp.java.FinalProject.domain.coupon.entity.QCoupon;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
-import com.sparta.camp.java.FinalProject.domain.product.entity.Product;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -12,7 +10,6 @@ import org.springframework.data.domain.PageImpl;
 import java.util.List;
 
 import static com.sparta.camp.java.FinalProject.domain.coupon.entity.QCoupon.coupon;
-import static com.sparta.camp.java.FinalProject.domain.product.entity.QProduct.product;
 
 @RequiredArgsConstructor
 public class CouponRepositoryImpl implements CouponRepositoryCustom {

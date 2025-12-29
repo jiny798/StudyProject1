@@ -7,7 +7,7 @@ import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.request.Up
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponse;
 import com.sparta.camp.java.FinalProject.domain.coupon.controller.dto.response.CouponResponseDto;
 import com.sparta.camp.java.FinalProject.domain.coupon.service.AdminCouponService;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;

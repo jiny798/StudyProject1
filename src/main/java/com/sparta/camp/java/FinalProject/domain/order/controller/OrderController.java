@@ -1,6 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.order.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderSearchCondition;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderDetailResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponse;
@@ -30,9 +31,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderProductResponse>> getOrders(@AuthenticationPrincipal User user) {
+    public ApiResponse<List<OrderProductResponse>> getOrders(@AuthenticationPrincipal User user, @ModelAttribute OrderSearchCondition searchCondition) {
         System.out.println("user.getId() " + user.getId());
-        List<OrderProductResponse> response = orderService.getOrderList(user.getId());
+        List<OrderProductResponse> response = orderService.getOrderList(user.getId(), searchCondition);
         return ApiResponse.success(response);
     }
 

@@ -3,6 +3,7 @@ package com.sparta.camp.java.FinalProject.domain.order.service;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderRequest;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderSearchCondition;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
 import com.sparta.camp.java.FinalProject.domain.cart.repository.CartRepository;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCompleteResponse;
@@ -43,20 +44,19 @@ public class OrderService {
                 .build();
     }
 
-    public List<OrderProductResponse> getOrderList(Long userId) {
+    @Transactional
+    public List<OrderProductResponse> getOrderList(Long userId, OrderSearchCondition searchCondition) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_USER));
         List<OrderProductResponse> response = new ArrayList<>();
 
-        // TODO: getOrders()는 Lazy Loading을 유발
-        // TODO: User 조회 시 Order, OrderProduct를 fetch join 하도록 변경 필요
-        List<Order> orders = user.getOrders();
+        List<Order> orders = orderRepository.findAllByUserId(userId);
+        System.out.println("orders " + orders.size());
         if (orders == null) {
             return Collections.emptyList();
         }
 
         orders.forEach(order -> {
-
             List<OrderProductResponseDto> orderProducts = order.getOrderProducts().stream()
                     .map(orderProduct -> {
                         return OrderProductResponseDto.builder()

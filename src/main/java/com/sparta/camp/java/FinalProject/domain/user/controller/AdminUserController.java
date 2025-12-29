@@ -1,18 +1,12 @@
 package com.sparta.camp.java.FinalProject.domain.user.controller;
 
-import com.sparta.camp.java.FinalProject.common.annotation.Loggable;
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import com.sparta.camp.java.FinalProject.domain.user.dto.UserResponse;
-import com.sparta.camp.java.FinalProject.domain.user.dto.UserSearchResponse;
 import com.sparta.camp.java.FinalProject.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor

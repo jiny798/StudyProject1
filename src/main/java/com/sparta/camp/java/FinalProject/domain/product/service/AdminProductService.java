@@ -5,7 +5,7 @@ import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.category.entity.Category;
 import com.sparta.camp.java.FinalProject.domain.category.repository.CategoryRepository;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductDetailResponse;
 import com.sparta.camp.java.FinalProject.domain.product.entity.ProductImages;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestProduct;

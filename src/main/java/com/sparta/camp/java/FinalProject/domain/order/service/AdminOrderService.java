@@ -6,12 +6,10 @@ import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.AdminOrderSummaryResponse;
 import com.sparta.camp.java.FinalProject.domain.order.entity.Order;
 import com.sparta.camp.java.FinalProject.domain.order.repository.OrderRepository;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +20,9 @@ public class AdminOrderService {
 
     private final OrderRepository orderRepository;
 
-    /**
-     * 주문 목록 조회
-     */
+
     public PagingResponse<AdminOrderSummaryResponse> getOrderList(RequestPage requestPage) {
-        Page<Order> orderPage = orderRepository.findAllWithUser(requestPage.getPageable());
-//        Page<AdminOrderSummaryResponse> orderSummaryPage = orderPage.map(AdminOrderSummaryResponse::from);
+        Page<Order> orderPage = orderRepository.getList(requestPage);
         return new PagingResponse<>(orderPage, AdminOrderSummaryResponse.class);
     }
 
@@ -36,6 +31,21 @@ public class AdminOrderService {
                 .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_ORDER)); // 예외 코드는 프로젝트에 맞게 수정
         return AdminOrderSummaryResponse.from(order);
     }
+
+    @Transactional
+    public void startDelivery(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_ORDER));
+        order.setStatus(OrderStatus.DELIVERY);
+    }
+
+    @Transactional
+    public void completeDelivery(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ServiceException(ServiceExceptionCode.NOT_FOUND_ORDER));
+        order.setStatus(OrderStatus.COMPLETED);
+    }
+
 
     @Transactional
     public void cancelOrder(Long orderId) {

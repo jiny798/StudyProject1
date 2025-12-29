@@ -17,6 +17,9 @@ import AdminCouponCreateView from "@/views/admin/coupon/AdminCouponCreateView.vu
 import AdminCouponList from "@/views/admin/coupon/AdminCouponList.vue";
 import AdminCouponEditView from "@/views/admin/coupon/AdminCouponEditView.vue";
 import AdminOrderList from "@/views/admin/order/AdminOrderList.vue";
+import AdminDeliveryList from "@/views/admin/order/AdminDeliveryList.vue";
+import AdminCancelList from "@/views/admin/order/AdminCancelList.vue";
+import AdminCompleteList from "@/views/admin/order/AdminCompleteList.vue";
 
 
 const router = createRouter({
@@ -85,6 +88,9 @@ const router = createRouter({
         {path: 'coupon/edit/:couponId', name: 'admin-coupon-edit', component: AdminCouponEditView},
         {path: 'coupons/list', name: 'admin-coupon-list', component: AdminCouponList},
         {path: 'orders', name: 'admin-orders-list', component: AdminOrderList},
+        {path: 'orders/delivery', name: 'admin-orders-delivery-list', component: AdminDeliveryList},
+        {path: 'orders/cancel', name: 'admin-orders-cancel-list', component: AdminCancelList},
+        {path: 'orders/complete', name: 'admin-orders-complete-list', component: AdminCompleteList},
       ],
     },
   ],

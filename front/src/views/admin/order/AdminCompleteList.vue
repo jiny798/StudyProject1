@@ -10,7 +10,7 @@
       style="width: 100%; margin-top: 20px;"
       border
     >
-      <el-table-column prop="orderId" label="주문번호" width="100" align="center"/>
+      <el-table-column prop="orderId" label="주문번호" width="100" align="center" />
 
       <el-table-column label="주문 상품 / 옵션" min-width="250">
         <template #default="{ row }">
@@ -19,8 +19,7 @@
                {{ item.productName }}
             </span>
 
-            <el-tag v-if="item.optionName" size="small" type="info" effect="plain"
-                    class="option-tag">
+            <el-tag v-if="item.optionName" size="small" type="info" effect="plain" class="option-tag">
               {{ item.optionName }}
             </el-tag>
 
@@ -61,21 +60,21 @@
           <div class="action-buttons">
 
             <el-button
-              v-if="row.status === 'PENDING'"
+              v-if="row.status === 'DELIVERY'"
               size="small"
               type="success"
-              @click.stop="startDelivery(row.orderId)"
+              @click.stop="completeDelivery(row.orderId)"
             >
-              배송 시작
+              배송 완료
             </el-button>
 
             <el-button
-              v-if="row.status === 'PENDING'"
+              v-if="row.status === 'DELIVERY'"
               size="small"
               type="danger"
-              @click.stop="rejectOrder(row.orderId)"
+              @click.stop="cancelDelivery(row.orderId)"
             >
-              주문 거절
+              배송 취소
             </el-button>
 
           </div>
@@ -97,9 +96,9 @@
 </template>
 
 <script setup lang="ts">
-import {reactive, onMounted, ref} from 'vue'
-import {container} from 'tsyringe'
-import {ElMessage} from 'element-plus'
+import { reactive, onMounted, ref } from 'vue'
+import { container } from 'tsyringe'
+import { ElMessage } from 'element-plus'
 
 import AdminOrderRepository from '@/repository/admin/AdminOrderRepository'
 import AdminOrderSummary from '@/entity/order/admin/AdminOrderSummary.ts'
@@ -118,7 +117,7 @@ const ORDER_REPOSITORY = container.resolve(AdminOrderRepository)
 const getList = async (page = 1) => {
   loading.value = true
   try {
-    state.orderPage = await ORDER_REPOSITORY.getOrders(page, 'PENDING')
+    state.orderPage = await ORDER_REPOSITORY.getOrders(page, 'COMPLETED')
 
   } catch (e: any) {
     console.error(e)
@@ -165,11 +164,11 @@ const formatDate = (dateValue: any) => {
   return `${year}-${month}-${day} ${hours}:${minutes}`
 }
 
-const startDelivery = async (orderId: number) => {
-  if (!confirm('해당 주문의 배송을 시작하시겠습니까?')) return
+const completeDelivery = async (orderId: number) => {
+  if (!confirm('해당 주문의 배송을 완료하시겠습니까?')) return
   try {
     loading.value = true
-    await ORDER_REPOSITORY.startDelivery(orderId)
+    await ORDER_REPOSITORY.completeDelivery(orderId)
 
     ElMessage.success('배송이 시작되었습니다.')
     await getList(state.orderPage.page)
@@ -184,31 +183,21 @@ const startDelivery = async (orderId: number) => {
 
 const formatStatus = (status: string) => {
   switch (status) {
-    case 'PENDING':
-      return '대기'
-    case 'DELIVERY':
-      return '배송중'
-    case 'COMPLETED':
-      return '완료'
-    case 'CANCELED':
-      return '취소됨'
-    default:
-      return status
+    case 'PENDING': return '대기'
+    case 'DELIVERY': return '배송중'
+    case 'COMPLETED': return '완료'
+    case 'CANCELED': return '취소됨'
+    default: return status
   }
 }
 
 const getStatusType = (status: string) => {
   switch (status) {
-    case 'PENDING':
-      return 'success'    // 초록색
-    case 'DELIVERY':
-      return 'warning' // 주황색
-    case 'COMPLETED':
-      return 'danger'   // 빨간색
-    case 'CANCELED':
-      return 'info'    // 회색
-    default:
-      return ''                 // 기본 파란색
+    case 'PENDING': return 'success'    // 초록색
+    case 'DELIVERY': return 'warning' // 주황색
+    case 'COMPLETED': return 'danger'   // 빨간색
+    case 'CANCELED': return 'info'    // 회색
+    default: return ''                 // 기본 파란색
   }
 }
 </script>
@@ -219,16 +208,13 @@ const getStatusType = (status: string) => {
   background-color: #fff;
   border-radius: 8px;
 }
-
 .header {
   margin-bottom: 20px;
 }
-
 .page-title {
   font-size: 1.5rem;
   margin: 0;
 }
-
 .pagination-area {
   margin-top: 20px;
   display: flex;
@@ -242,46 +228,39 @@ const getStatusType = (status: string) => {
   margin-bottom: 4px;
   font-size: 14px;
 }
-
 .product-item:last-child {
   margin-bottom: 0;
 }
-
 .product-name {
   font-weight: 500;
   color: #333;
 }
-
 .option-tag {
   color: #666;
   border-color: #eee;
 }
-
 .quantity {
   color: #888;
   font-size: 13px;
 }
-
 .user-name {
   font-weight: bold;
 }
-
 .user-email {
   font-size: 12px;
   color: #999;
 }
-
 .price-text {
   font-weight: 600;
   color: #f56c6c;
 }
 
 .action-buttons {
-  display: flex; /* 가로 배치 */
-  justify-content: center; /* 중앙 정렬 */
-  align-items: center; /* 수직 중앙 정렬 */
-  gap: 8px; /* 버튼 사이 간격 8px */
-  width: 100%; /* 부모 영역 꽉 채우기 */
+  display: flex;            /* 가로 배치 */
+  justify-content: center;  /* 중앙 정렬 */
+  align-items: center;      /* 수직 중앙 정렬 */
+  gap: 8px;                 /* 버튼 사이 간격 8px */
+  width: 100%;              /* 부모 영역 꽉 채우기 */
 }
 
 .action-buttons .el-button + .el-button {

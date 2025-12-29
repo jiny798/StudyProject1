@@ -1,18 +1,15 @@
 <template>
   <div class="mypage-container">
-    <!-- 프로필 정보 -->
     <section class="profile-section">
       <div class="profile-left">
         <el-avatar :size="72" icon="UserFilled" class="avatar" />
         <div class="info-text">
-          <h3>{{ state.user.nickname }}</h3>
           <p class="email">{{ state.user.email }}</p>
         </div>
       </div>
       <el-button class="edit-btn" size="small" @click="goToProfileEdit">프로필 수정</el-button>
     </section>
 
-    <!-- 상단 요약 정보 -->
     <section class="summary-section">
       <div class="summary-item" v-for="(value, key) in summary" :key="key">
         <p class="label">{{ keyLabel(key) }}</p>
@@ -20,58 +17,93 @@
       </div>
     </section>
 
-    <!-- 탭 영역 -->
     <el-tabs v-model="state.activeTab" class="tabs" stretch>
-      <el-tab-pane label="구매내역" name="orders">
-        <!-- 날짜 필터 -->
-        <div class="date-filter">
-          <el-button v-for="(label, key) in dateRanges" :key="key" size="default" @click="filterByPresetRange(key)">
-            {{ label }}
-          </el-button>
 
-          <el-date-picker
-            v-model="selectedRange"
-            type="daterange"
-            unlink-panels
-            range-separator="~"
-            start-placeholder="시작일"
-            end-placeholder="종료일"
-            size="default"
-          />
-          <el-button type="primary" size="default" @click="onSearchByRange">조회</el-button>
+      <el-tab-pane label="구매내역" name="orders">
+
+        <div class="filter-container">
+          <div class="preset-group">
+            <el-button-group>
+              <el-button
+                v-for="(label, key) in dateRanges"
+                :key="key"
+                :type="activePreset === key ? 'primary' : ''"
+                size="default"
+                @click="filterByPresetRange(key)"
+              >
+                {{ label }}
+              </el-button>
+            </el-button-group>
+          </div>
+
+          <div class="picker-group">
+            <el-date-picker
+              v-model="selectedRange"
+              type="daterange"
+              unlink-panels
+              range-separator="~"
+              start-placeholder="시작일"
+              end-placeholder="종료일"
+              size="large"
+              class="custom-date-picker"
+              style="flex: 1;"
+            />
+            <el-button type="primary" size="large" :icon="Search" @click="onSearchByRange">
+              조회
+            </el-button>
+          </div>
         </div>
 
-        <!-- 주문 목록 -->
-        <div v-for="(order, index) in filteredProductList" :key="index" class="order-card">
-          <div class="order-date">{{ order.getDisplayBuyDate() }}</div>
+        <div v-if="filteredProductList.length === 0" class="no-data">
+          <el-empty description="조회된 주문 내역이 없습니다." />
+        </div>
 
-          <div class="order-products">
-            <div v-for="(name, i) in order.productName" :key="i" class="product-item">
-              <img :src="order.image[i]" alt="상품 이미지" class="product-img" />
-              <div class="product-info">
-                <div class="product-name">{{ name }}</div>
-                <div class="product-count">수량: {{ order.count[i] }}개</div>
+        <div v-for="(order, index) in filteredProductList" :key="index" class="order-card">
+
+          <div class="order-header">
+            <div class="header-left">
+              <span class="order-date-text">{{ formatDate(order.createdAt) }}</span>
+              <span class="divider">|</span>
+              <span class="order-id-label">주문번호 {{ order.orderId }}</span>
+            </div>
+            <div class="header-right">
+              <el-tag :type="getStatusType(order.deliveryStatus)" effect="light" round>
+                {{ getStatusLabel(order.deliveryStatus) }}
+              </el-tag>
+            </div>
+          </div>
+
+          <div class="order-body" @click="goToOrderDetail(order.orderId)">
+            <div class="product-info-section">
+              <div class="product-name">
+                {{ getOrderName(order) }}
+              </div>
+              <div class="product-desc">
+                {{ order.products[0]?.optionName || '기본 옵션' }}
+              </div>
+            </div>
+
+            <div class="price-info-section">
+              <div class="price-row">
+                <span class="value price">{{ order.totalPrice?.toLocaleString() }}원</span>
+              </div>
+              <div class="price-row" v-if="order.discountPrice > 0">
+                <span class="value discount">(-{{ order.discountPrice?.toLocaleString() }}원 할인)</span>
               </div>
             </div>
           </div>
 
           <div class="order-footer">
-            <div>배송상태: {{ order.deliveryStatus }}</div>
-            <div>총 금액: ₩{{ order.totalPrice.toLocaleString() }}</div>
-            <el-button
-              v-if="order.deliveryStatus === 'READY'"
-              type="danger"
-              size="small"
-              @click="cancelOrder(order.productId)"
-            >
-              주문 취소
+            <el-button class="detail-btn" size="default" @click="goToOrderDetail(order.orderId)">
+              상세보기
             </el-button>
           </div>
         </div>
+
       </el-tab-pane>
 
       <el-tab-pane label="문의내역" name="inquiries">
-        <!-- 문의내역은 추후 구현 -->
+        <div class="no-data">준비 중입니다.</div>
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -80,20 +112,28 @@
 <script setup lang="ts">
 import { onBeforeMount, reactive, ref } from 'vue'
 import { container } from 'tsyringe'
+import { Search, UserFilled } from '@element-plus/icons-vue' // 아이콘 Import
+
+// Repository & Entity Imports (사용자 환경에 맞게 경로 유지)
 import OrderRepository from '@/repository/user/OrderRepository.ts'
 import UserProfile from '@/entity/user/UserProfile'
-import ResponseOrderProduct from '@/entity/order/user/OrderProductRequest.ts'
 import ProfileRepository from '@/repository/user/ProfileRepository.ts'
+import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts"
 
+// --- DI Container Resolve ---
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
 const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
 
+// --- State & Variables ---
 const today = new Date()
 const oneWeekAgo = new Date()
 oneWeekAgo.setDate(today.getDate() - 7)
-const selectedRange = ref<[Date, Date] | null>([oneWeekAgo, today])
-const filteredProductList = ref<ResponseOrderProduct[]>([])
 
+const selectedRange = ref<[Date, Date] | null>([oneWeekAgo, today])
+const activePreset = ref<string>('week') // 현재 활성화된 필터 버튼
+const filteredProductList = ref<OrderProductResponse[]>([])
+
+// 기간 프리셋 정의
 const dateRanges = {
   week: '1주일',
   month1: '1개월',
@@ -101,25 +141,41 @@ const dateRanges = {
   month6: '6개월',
 }
 
+// 요약 정보 (API 연동 시 reactive 객체 업데이트 필요)
+const summary = reactive({
+  orders: 3,
+  coupons: 2,
+  reviews: 1,
+})
+
 const state = reactive({
   user: new UserProfile(),
-  productList: [] as ResponseOrderProduct[],
+  orderList: [] as OrderProductResponse[],
   activeTab: 'orders',
 })
 
+// --- Lifecycle Hook ---
+onBeforeMount(() => {
+  // 프로필 정보 로드
+  state.user = PROFILE_REPOSITORY.getProfile() || new UserProfile()
+  // 초기 데이터 로드 (최근 1주일)
+  getOrderList(oneWeekAgo, today)
+})
+
+// --- Methods (Logic) ---
+
+// 1. 데이터 조회 요청
 function getOrderList(start: Date, end: Date) {
   ORDER_REPOSITORY.getOrders(start, end).then((orderList) => {
-    state.productList = orderList.map((item) => Object.assign(new ResponseOrderProduct(), item))
-    filteredProductList.value = [...state.productList]
+    state.orderList = orderList.map((item) => Object.assign(new OrderProductResponse(), item))
+    filteredProductList.value = [...state.orderList]
   })
 }
 
-function cancelOrder(productId: number[]) {
-  console.log('주문 취소 요청:', productId)
-  alert('주문이 취소되었습니다.')
-}
-
+// 2. 프리셋 버튼 클릭 핸들러
 function filterByPresetRange(type: keyof typeof dateRanges) {
+  activePreset.value = type
+
   const end = new Date()
   let start = new Date()
 
@@ -142,27 +198,68 @@ function filterByPresetRange(type: keyof typeof dateRanges) {
   getOrderList(start, end)
 }
 
+// 3. 수동 조회 버튼 핸들러
 function onSearchByRange() {
+  activePreset.value = '' // 프리셋 하이라이트 해제
   if (selectedRange.value) {
     const [start, end] = selectedRange.value
     getOrderList(start, end)
   }
 }
 
-onBeforeMount(() => {
-  state.user = PROFILE_REPOSITORY.getProfile() || new UserProfile()
-  getOrderList(oneWeekAgo, today)
-})
+// 4. 상품명 포맷팅 (XX 외 N개)
+function getOrderName(order: any) {
+  if (!order.products || order.products.length === 0) {
+    return '상품 정보 없음'
+  }
+  const firstProductName = order.products[0].productName
+  const count = order.products.length
 
-const summary = reactive({
-  orders: 3,
-  coupons: 2,
-  points: '5,000P',
-  reviews: 1,
-})
+  if (count > 1) {
+    return `${firstProductName} 외 ${count - 1}개`
+  } else {
+    return firstProductName
+  }
+}
 
+// 5. 날짜 포맷팅 (YYYY.MM.DD)
+function formatDate(dateStr: string | Date | undefined) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr)
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
+}
+
+// 6. 상태값 한글 변환
+function getStatusLabel(status: string) {
+  const map: Record<string, string> = {
+    'READY': '주문접수',
+    'SHIPPING': '배송중',
+    'COMPLETE': '배송완료',
+    'CANCELED': '취소완료'
+  }
+  return map[status] || status
+}
+
+// 7. 상태별 태그 컬러
+function getStatusType(status: string) {
+  const map: Record<string, string> = {
+    'READY': 'info',
+    'SHIPPING': 'primary',
+    'COMPLETE': 'success',
+    'CANCELED': 'danger'
+  }
+  return map[status] || 'info'
+}
+
+// 8. Navigation
 function goToProfileEdit() {
   alert('프로필 수정 페이지 진입')
+  // router.push('/mypage/edit')
+}
+
+function goToOrderDetail(orderId: number) {
+  alert(`주문 상세 페이지로 이동 (ID: ${orderId})`)
+  // router.push(`/mypage/orders/${orderId}`)
 }
 
 function keyLabel(key: string) {
@@ -180,39 +277,18 @@ function keyLabel(key: string) {
   color: #222;
 }
 
+/* 프로필 섹션 */
 .profile-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
+.profile-left { display: flex; align-items: center; }
+.avatar { background-color: #f5f5f5; margin-right: 16px; }
+.info-text .email { margin-top: 4px; font-size: 14px; color: #666; }
 
-.profile-left {
-  display: flex;
-  align-items: center;
-}
-
-.avatar {
-  background-color: #f5f5f5;
-  margin-right: 16px;
-}
-
-.info-text h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.email {
-  margin-top: 4px;
-  font-size: 14px;
-  color: #666;
-}
-
-.edit-btn {
-  font-weight: 500;
-}
-
+/* 요약 섹션 */
 .summary-section {
   display: flex;
   justify-content: space-between;
@@ -222,96 +298,85 @@ function keyLabel(key: string) {
   margin-bottom: 32px;
   text-align: center;
 }
+.summary-item { flex: 1; }
+.label { font-size: 13px; color: #999; margin-bottom: 6px; }
+.value { font-size: 16px; font-weight: 600; }
 
-.summary-item {
-  flex: 1;
-}
+/* 탭 & 필터 영역 */
+.tabs { background-color: #fff; }
 
-.label {
-  font-size: 13px;
-  color: #999;
-  margin-bottom: 6px;
-}
-
-.value {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.tabs {
-  background-color: #fff;
-  border: none;
-}
-
-.date-filter {
+.filter-container {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 24px;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
+  flex-direction: column;
+  gap: 16px;
+}
+.preset-group { display: flex; justify-content: flex-start; }
+.picker-group { display: flex; gap: 8px; align-items: center; }
+
+/* 날짜 선택기 모바일 대응 */
+:deep(.el-date-editor.custom-date-picker) {
+  width: 100% !important;
+  box-sizing: border-box;
 }
 
+/* 주문 목록 카드 스타일 */
 .order-card {
   border: 1px solid #eee;
   border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  overflow: hidden;
 }
 
-.order-date {
-  font-size: 13px;
-  color: #999;
-  margin-bottom: 12px;
-}
-
-.order-products {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.product-item {
-  display: flex;
-  align-items: center;
-}
-
-.product-img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-right: 12px;
-  border: 1px solid #eee;
-}
-
-.product-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.product-name {
-  font-size: 16px;
-  font-weight: 500;
-}
-
-.product-count {
-  font-size: 14px;
-  color: #888;
-}
-
-.order-footer {
+/* 카드 헤더 */
+.order-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 14px;
-  margin-top: 16px;
-  color: #555;
+  padding: 14px 20px;
+  border-bottom: 1px solid #f5f5f5;
+  background-color: #fff;
 }
+.header-left { font-size: 14px; color: #333; font-weight: 500; }
+.order-date-text { font-weight: 600; color: #222; }
+.divider { margin: 0 8px; color: #ddd; font-size: 12px; }
+.order-id-label { color: #888; font-weight: 400; }
 
-.more-toggle {
-  font-size: 14px;
-  color: #007bff;
+/* 카드 바디 */
+.order-body {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
-  margin-top: 8px;
+  transition: background-color 0.2s;
 }
+.order-body:hover { background-color: #fcfcfc; }
+
+.product-info-section { flex: 1; padding-right: 16px; }
+.product-name { font-size: 17px; font-weight: 600; color: #333; margin-bottom: 6px; line-height: 1.4; }
+.product-desc { font-size: 13px; color: #999; }
+
+.price-info-section { text-align: right; min-width: 110px; }
+.price-row .price { font-size: 18px; font-weight: 700; color: #222; }
+.price-row .discount { color: #ff4d4f; font-weight: 500; font-size: 13px; margin-top: 4px; display: block; }
+
+/* 카드 푸터 */
+.order-footer {
+  padding: 12px 20px;
+  background-color: #fcfcfc;
+  border-top: 1px solid #f5f5f5;
+  display: flex;
+  justify-content: center;
+}
+.detail-btn { width: 100%; font-weight: 500; background-color: #fff; color: #555; border-color: #ddd; }
+.detail-btn:hover { color: #409eff; border-color: #c6e2ff; background-color: #ecf5ff; }
+
+/* 기타 */
+.no-data { text-align: center; padding: 40px 0; color: #999; }
 </style>

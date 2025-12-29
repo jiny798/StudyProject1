@@ -16,7 +16,8 @@
           </template>
           <el-menu-item index="/admin/orders">주문 목록</el-menu-item>
           <el-menu-item index="/admin/orders/delivery">배송 관리</el-menu-item>
-          <el-menu-item index="/admin/orders/claims">취소/반품 관리</el-menu-item>
+          <el-menu-item index="/admin/orders/cancel">취소/반품 관리</el-menu-item>
+          <el-menu-item index="/admin/orders/complete">배송 완료 관리</el-menu-item>
         </el-sub-menu>
 
         <el-sub-menu index="members">

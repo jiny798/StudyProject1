@@ -2,8 +2,8 @@ import { inject, singleton } from 'tsyringe'
 import HttpRepository from '@/repository/user/HttpRepository.ts'
 import ProductInCart from '@/entity/order/user/ProductInCart.ts'
 import type OrderRequest from '@/entity/order/user/OrderRequest.ts'
-import ResponseOrderProduct from '@/entity/order/user/OrderProductRequest.ts'
-import OrderProduct from '@/entity/order/user/OrderProductRequest.ts'
+import OrderProductRequest from '@/entity/order/user/OrderProductRequest.ts'
+import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts";
 
 @singleton()
 export default class OrderRepository {
@@ -20,20 +20,20 @@ export default class OrderRepository {
     const start = startDate.toISOString().slice(0, 10) // 'yyyy-MM-dd'
     const end = endDate.toISOString().slice(0, 10)
 
-    return this.httpRepository.getAll<ResponseOrderProduct>(
+    return this.httpRepository.getAll<OrderProductResponse>(
       {
-        path: `/api/order?startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}`,
+        path: `/api/orders?startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}`,
       },
-      ResponseOrderProduct,
+      OrderProductResponse,
     )
   }
 
   public cancel() {
-    return this.httpRepository.getAll<ResponseOrderProduct>(
+    return this.httpRepository.getAll<OrderProductRequest>(
       {
         path: `/api/`,
       },
-      ResponseOrderProduct,
+      OrderProductRequest,
     )
   }
 }

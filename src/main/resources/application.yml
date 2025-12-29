@@ -16,8 +16,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    show-sql: true
     properties:
       hibernate:
+        format_sql: true
+        highlight_sql: true
+        use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL8Dialect
         hbm2ddl.extra_physical_table_types: PARTITIONED TABLE
   # 로깅 레벨 설정

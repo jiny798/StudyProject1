@@ -1,7 +1,7 @@
 package com.sparta.camp.java.FinalProject.domain.product.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
-import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestPage;
+import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.RequestProduct;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.ProductDetailResponse;

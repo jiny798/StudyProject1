@@ -1,6 +1,7 @@
-package com.sparta.camp.java.FinalProject.domain.product.controller.dto.request;
+package com.sparta.camp.java.FinalProject.common.page;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
@@ -8,7 +9,7 @@ import static java.lang.Math.min;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 public class RequestPage {

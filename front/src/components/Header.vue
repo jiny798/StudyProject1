@@ -8,9 +8,14 @@
           <span class="brand">유신사</span>
         </router-link>
 
-        <router-link to="/products" class="nav-link">Man</router-link>
-        <router-link to="/products" class="nav-link">Woman</router-link>
-        <router-link to="/products" class="nav-link">Kids</router-link>
+        <router-link
+          v-for="category in parentCategories"
+          :key="category.id"
+          :to="{ path: '/products', query: { categoryId: category.id } }"
+          class="nav-link"
+        >
+          {{ category.name }}
+        </router-link>
       </div>
 
       <div class="nav-right">
@@ -37,21 +42,35 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, reactive } from 'vue'
+import {onBeforeMount, reactive, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import type UserProfile from '@/entity/user/UserProfile'
 import UserRepository from '@/repository/user/UserRepository.ts'
 import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import { Umbrella } from '@element-plus/icons-vue' // 사용 안 하는 아이콘 제거
+import CategoryRepository from "@/repository/user/CategoryRepository.ts";
+import type Category from "@/entity/product/Category.ts";
 
 const USER_REPOSITORY = container.resolve(UserRepository)
 const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
-const router = useRouter()
+const categoryRepository = container.resolve(CategoryRepository)
+const parentCategories = ref<Category[]>([])
 
+const fetchCategories = async () => {
+  try {
+    parentCategories.value = await categoryRepository.getAll()
+    console.log(parentCategories.value)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+const router = useRouter()
 const state = reactive<{ profile: UserProfile | null }>({ profile: null })
 
 onBeforeMount(() => {
+  fetchCategories()
   USER_REPOSITORY.getProfile().then((profile) => {
     PROFILE_REPOSITORY.setProfile(profile)
     state.profile = profile
