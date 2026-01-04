@@ -4,12 +4,8 @@ import com.sparta.camp.java.FinalProject.common.exception.ServiceException;
 import com.sparta.camp.java.FinalProject.common.exception.ServiceExceptionCode;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderRequest;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderSearchCondition;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.*;
 import com.sparta.camp.java.FinalProject.domain.cart.repository.CartRepository;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCompleteResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderDetailResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponseDto;
 import com.sparta.camp.java.FinalProject.domain.order.entity.Order;
 import com.sparta.camp.java.FinalProject.domain.order.repository.OrderRepository;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
@@ -92,5 +88,15 @@ public class OrderService {
     @Transactional
     public OrderCancelResponse cancelOrder(Long userId, Long orderId) {
         return purchaseCancelService.cancelOrder(orderId, userId);
+    }
+
+    public UserOrderCount getOrderCount(Long userId) {
+        Long orderCount = orderRepository.getOrderCount(userId);
+        if (orderCount == null) {
+            orderCount = 0L;
+        }
+        return UserOrderCount.builder()
+                .orderCount(orderCount.intValue())
+                .build();
     }
 }

@@ -54,6 +54,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
         return new PageImpl<>(items, requestPage.getPageable(), totalCount);
     }
 
+    public Long getOrderCount(Long userId) {
+        return jpaQueryFactory.select(order.count())
+                .from(order)
+                .where(order.user.id.eq(userId))
+                .fetchOne();
+    }
+
     // 상태 조건
     private BooleanExpression eqStatus(OrderStatus status) {
         return status != null ? order.status.eq(status) : null;

@@ -83,7 +83,7 @@
 <script setup lang="ts">
 import { computed, onMounted, provide, reactive, ref } from 'vue'
 import { container } from 'tsyringe'
-import CategoryRepository from '@/repository/user/CategoryRepository.ts'
+import CategoryRepository from '@/repository/admin/AdminCategoryRepository.ts'
 import CategoryWrite from '@/entity/product/CategoryWrite.ts'
 import type Category from '@/entity/product/Category'
 import CategoryTreeItem from '@/components/category/CategoryTreeItem.vue'

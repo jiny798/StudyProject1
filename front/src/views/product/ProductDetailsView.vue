@@ -77,7 +77,7 @@ import {ref, reactive, defineProps, computed} from 'vue'
 import {container} from 'tsyringe'
 import { useRouter } from 'vue-router'
 import ProductRepository from '@/repository/user/ProductRepository.ts'
-import CategoryRepository from '@/repository/user/CategoryRepository.ts'
+import CategoryRepository from '@/repository/admin/AdminCategoryRepository.ts'
 import OrderRepository from '@/repository/user/OrderRepository.ts'
 import CartRepository from "@/repository/user/CartRepository.ts";
 import Product from '@/entity/product/Product'

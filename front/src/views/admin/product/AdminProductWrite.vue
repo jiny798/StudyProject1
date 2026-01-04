@@ -84,8 +84,8 @@ import ProductWrite from '@/entity/product/ProductWrite.ts'
 import {container} from 'tsyringe'
 import {useRouter} from 'vue-router'
 import type HttpError from '@/http/HttpError.ts'
-import ProductRepository from '@/repository/user/ProductRepository.ts'
-import CategoryRepository from '@/repository/user/CategoryRepository.ts'
+import AdminProductRepository from '@/repository/admin/AdminProductRepository.ts'
+import CategoryRepository from '@/repository/admin/AdminCategoryRepository.ts'
 import type Category from '@/entity/product/Category.ts'
 import RecursiveOptions from './RecursiveOptions.vue'
 import type {Option, OptionValue} from './types'
@@ -111,7 +111,7 @@ const state = reactive<StateType>({
   categories: [],
 })
 
-const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+const PRODUCT_REPOSITORY = container.resolve(AdminProductRepository)
 const CATEGORY_REPOSITORY = container.resolve(CategoryRepository)
 const router = useRouter()
 

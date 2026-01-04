@@ -5,6 +5,7 @@ export default class UserProfile {
   public id = 0
   public name = ''
   public email = ''
+  public phone = ''
 
   // @Transform(({ value }) => LocalDateTime.parse(value, DateTimeFormatter.ISO_LOCAL_DATE_TIME))
   public createdAt = LocalDateTime.now()

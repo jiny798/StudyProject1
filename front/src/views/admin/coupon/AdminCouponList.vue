@@ -91,11 +91,11 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import CouponRepository from '@/repository/user/CouponRepository.ts'
+import AdminCouponRepository from '@/repository/admin/AdminCouponRepository.ts'
 import CouponResponse from "@/entity/coupon/Coupon.ts"
 
 const router = useRouter()
-const COUPON_REPOSITORY = container.resolve(CouponRepository)
+const COUPON_REPOSITORY = container.resolve(AdminCouponRepository)
 
 const coupons = ref<CouponResponse[]>([])
 const loading = ref(false)

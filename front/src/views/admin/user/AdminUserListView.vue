@@ -73,7 +73,7 @@ import {ElMessage} from 'element-plus'
 import User from '@/entity/user/UserProfile.ts'
 import CouponResponse from '@/entity/coupon/Coupon.ts'
 import UserRepository from '@/repository/user/UserRepository.ts'
-import CouponRepository from '@/repository/user/CouponRepository.ts' // Coupon 리포지토리 필요
+import AdminCouponRepository from '@/repository/admin/AdminCouponRepository.ts' // Coupon 리포지토리 필요
 import Paging from "@/entity/data/Paging.ts";
 import IssueCouponRequest from "@/entity/coupon/IssueCouponRequest.ts";
 
@@ -84,7 +84,7 @@ const state = reactive({
 })
 const loading = ref(false)
 const USER_REPOSITORY = container.resolve(UserRepository)
-const COUPON_REPOSITORY = container.resolve(CouponRepository)
+const COUPON_REPOSITORY = container.resolve(AdminCouponRepository)
 
 // 쿠폰 모달 관련 상태 ---
 const couponDialogVisible = ref(false)

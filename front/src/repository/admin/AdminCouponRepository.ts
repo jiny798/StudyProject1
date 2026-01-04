@@ -9,7 +9,7 @@ import CouponResponse from "@/entity/coupon/Coupon.ts";
 import type IssueCouponRequest from "@/entity/coupon/IssueCouponRequest.ts";
 
 @singleton()
-export default class CouponRepository {
+export default class AdminCouponRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
   }
 

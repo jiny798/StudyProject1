@@ -155,14 +155,14 @@ import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
 import { ElMessage } from 'element-plus'
 import { DateTimeFormatter, LocalDateTime } from '@js-joda/core'
-// CouponRepository 가정 (실제 파일 경로에 맞게 수정)
-import CouponRepository from '@/repository/user/CouponRepository.ts'
+// AdminCouponRepository 가정 (실제 파일 경로에 맞게 수정)
+import AdminCouponRepository from '@/repository/admin/AdminCouponRepository.ts'
 import ProductWrite from "@/entity/product/ProductWrite.ts";
 import type Category from "@/entity/product/Category.ts";
 import CouponWrite from "@/entity/coupon/CouponWrite.ts";
 
 const router = useRouter()
-const COUPON_REPOSITORY = container.resolve(CouponRepository)
+const COUPON_REPOSITORY = container.resolve(AdminCouponRepository)
 const loading = ref(false)
 
 // 날짜 범위 선택용 (Element Plus DatePicker는 배열로 다룸)

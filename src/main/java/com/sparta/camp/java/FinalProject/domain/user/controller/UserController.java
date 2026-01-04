@@ -27,19 +27,17 @@ public class UserController {
         return ApiResponse.success(userService.signUp(request));
     }
 
-    @PutMapping("{userId}")
-    public ApiResponse<Void> update(@PathVariable Long userId,
+    @PutMapping("/password")
+    public ApiResponse<Void> update(@AuthenticationPrincipal User user,
                                     @Valid @RequestBody UserPasswordUpdateRequest request) {
-        userService.update(userId, request);
+        userService.updatePassword(user.getId(), request);
         return ApiResponse.success();
     }
-
     @DeleteMapping("{userId}")
     public ApiResponse<Void> delete(@AuthenticationPrincipal User user) {
         userService.delete(user.getId());
         return ApiResponse.success();
     }
-
 
     @GetMapping("/me")
     public ApiResponse<UserResponse> getMe(@AuthenticationPrincipal User user) {

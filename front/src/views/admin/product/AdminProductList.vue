@@ -72,7 +72,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { Picture } from '@element-plus/icons-vue'
 
 import Product from '@/entity/product/Product.ts'
-import ProductRepository from '@/repository/user/ProductRepository.ts'
+import AdminProductRepository from '@/repository/admin/AdminProductRepository.ts'
 import Paging from "@/entity/data/Paging.ts";
 
 interface State {
@@ -85,7 +85,7 @@ const state = reactive<State>({
 
 const loading = ref(false)
 const router = useRouter()
-const PRODUCT_REPOSITORY = container.resolve(ProductRepository)
+const PRODUCT_REPOSITORY = container.resolve(AdminProductRepository)
 
 // --- 데이터 조회 및 변환 로직 (핵심) ---
 const getList = async (page = 1) => {

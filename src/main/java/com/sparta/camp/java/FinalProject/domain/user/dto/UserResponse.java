@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserResponse {
+public class  UserResponse {
 
     Long id;
 
@@ -18,12 +18,15 @@ public class UserResponse {
 
     String email;
 
+    String phone;
+
     LocalDateTime createdAt;
 
     public UserResponse(User user) {
         this.id = user.getId();
         this.name = user.getName();
         this.email = user.getEmail();
+        this.phone = user.getPhone();
         this.createdAt = user.getCreatedAt();
     }
 

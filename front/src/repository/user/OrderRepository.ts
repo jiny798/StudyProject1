@@ -3,7 +3,8 @@ import HttpRepository from '@/repository/user/HttpRepository.ts'
 import ProductInCart from '@/entity/order/user/ProductInCart.ts'
 import type OrderRequest from '@/entity/order/user/OrderRequest.ts'
 import OrderProductRequest from '@/entity/order/user/OrderProductRequest.ts'
-import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts";
+import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts"
+import UserOrderCount from "@/entity/order/user/UserOrderCount.ts";
 
 @singleton()
 export default class OrderRepository {
@@ -31,9 +32,20 @@ export default class OrderRepository {
   public cancel() {
     return this.httpRepository.getAll<OrderProductRequest>(
       {
-        path: `/api/`,
+        path: `/api/orders/cancel`,
       },
       OrderProductRequest,
     )
   }
+
+  public getOrderCount() {
+    return this.httpRepository.get<UserOrderCount>(
+      {
+        path: `/api/orders/count`,
+      },
+      UserOrderCount,
+    )
+  }
+
+
 }

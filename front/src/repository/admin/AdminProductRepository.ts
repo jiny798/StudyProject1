@@ -6,21 +6,28 @@ import Product from '@/entity/product/Product.ts'
 import Paging from '@/entity/data/Paging.ts'
 
 @singleton()
-export default class ProductRepository {
+export default class AdminProductRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {}
 
-  public get(productId: number) {
-    return this.httpRepository.get<Product>({ path: `/api/products/${productId}` }, Product)
+  public write(request: ProductWrite) {
+    return this.httpRepository.post({
+      path: '/api/admin/products',
+      body: request,
+    })
   }
 
-
-  public getListByCategory(page: number, categoryId: number) {
+  public getList(page: number) {
     return this.httpRepository.getList<Product>(
       {
-        path: `/api/products?page=${page}&size=10&categoryId=${categoryId}`,
+        path: `/api/admin/products?page=${page}&size=10`,
       },
       Product,
     )
   }
 
+  public delete(productId: number) {
+    return this.httpRepository.delete({
+      path: `/api/admin/products/${productId}`,
+    })
+  }
 }

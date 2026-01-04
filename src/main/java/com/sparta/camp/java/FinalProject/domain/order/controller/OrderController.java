@@ -2,11 +2,8 @@ package com.sparta.camp.java.FinalProject.domain.order.controller;
 
 import com.sparta.camp.java.FinalProject.common.response.ApiResponse;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderSearchCondition;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCancelResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderDetailResponse;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderProductResponse;
+import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.*;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderRequest;
-import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.OrderCompleteResponse;
 import com.sparta.camp.java.FinalProject.domain.order.service.OrderService;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.validation.Valid;
@@ -50,4 +47,11 @@ public class OrderController {
         OrderCancelResponse response = orderService.cancelOrder(user.getId(), orderId);
         return ApiResponse.success(response);
     }
+
+    @GetMapping("/count")
+    public ApiResponse<UserOrderCount> getOrderCount(@AuthenticationPrincipal User user) {
+        UserOrderCount userOrderCount = orderService.getOrderCount(user.getId());
+        return ApiResponse.success(userOrderCount);
+    }
+
 }

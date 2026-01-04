@@ -4,7 +4,7 @@ import Category from '@/entity/product/Category.ts'
 import type CategoryWrite from "@/entity/product/CategoryWrite.ts";
 
 @singleton()
-export default class CategoryRepository {
+export default class AdminCategoryRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
   }
 

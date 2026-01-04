@@ -49,7 +49,7 @@ import type UserProfile from '@/entity/user/UserProfile'
 import UserRepository from '@/repository/user/UserRepository.ts'
 import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import { Umbrella } from '@element-plus/icons-vue' // 사용 안 하는 아이콘 제거
-import CategoryRepository from "@/repository/user/CategoryRepository.ts";
+import CategoryRepository from "@/repository/admin/AdminCategoryRepository.ts";
 import type Category from "@/entity/product/Category.ts";
 
 const USER_REPOSITORY = container.resolve(UserRepository)

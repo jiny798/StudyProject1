@@ -1,5 +1,6 @@
 package com.sparta.camp.java.FinalProject.domain.product.repository.querydsl;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.camp.java.FinalProject.common.page.RequestPage;
 import com.sparta.camp.java.FinalProject.domain.product.controller.dto.request.ProductSearchCondition;
@@ -19,17 +20,32 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
     @Override
     public Page<Product> getList(RequestPage requestPage) {
-        long totalCount = jpaQueryFactory.select(product.count())
+        BooleanExpression categoryCondition = eqCategoryId(requestPage);
+        Long totalCount = jpaQueryFactory.select(product.count())
                 .from(product)
-                .fetchFirst();
+                .where(categoryCondition) // 조건 적용
+                .fetchOne();
 
         List<Product> items = jpaQueryFactory.selectFrom(product)
-                .where(product.category.id.eq(((ProductSearchCondition) requestPage).getCategoryId()))
+                .where(categoryCondition) // 조건 적용
                 .limit(requestPage.getSize())
                 .offset(requestPage.getOffset())
                 .orderBy(product.id.desc())
                 .fetch();
 
+        if (totalCount == null) totalCount = 0L;
+
         return new PageImpl<>(items, requestPage.getPageable(), totalCount);
+    }
+
+    private BooleanExpression eqCategoryId(RequestPage requestPage) {
+        if (requestPage instanceof ProductSearchCondition) {
+            ProductSearchCondition condition = (ProductSearchCondition) requestPage;
+
+            if (condition.getCategoryId() != null) {
+                return product.category.id.eq(condition.getCategoryId());
+            }
+        }
+        return null;
     }
 }

@@ -20,6 +20,7 @@ import AdminOrderList from "@/views/admin/order/AdminOrderList.vue";
 import AdminDeliveryList from "@/views/admin/order/AdminDeliveryList.vue";
 import AdminCancelList from "@/views/admin/order/AdminCancelList.vue";
 import AdminCompleteList from "@/views/admin/order/AdminCompleteList.vue";
+import ProfileEditView from "@/views/user/ProfileEditView.vue";
 
 
 const router = createRouter({
@@ -49,6 +50,11 @@ const router = createRouter({
       path: '/profile',
       name: 'my page',
       component: ProfileView,
+    },
+    {
+      path: '/profile/edit',
+      name: 'profile edit',
+      component: ProfileEditView,
     },
     {
       path: '/products/:productId',

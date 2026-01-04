@@ -119,6 +119,7 @@ import OrderRepository from '@/repository/user/OrderRepository.ts'
 import UserProfile from '@/entity/user/UserProfile'
 import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts"
+import router from "@/router";
 
 // --- DI Container Resolve ---
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
@@ -143,9 +144,9 @@ const dateRanges = {
 
 // 요약 정보 (API 연동 시 reactive 객체 업데이트 필요)
 const summary = reactive({
-  orders: 3,
-  coupons: 2,
-  reviews: 1,
+  orders: 0,
+  coupons: 0,
+  reviews: 0,
 })
 
 const state = reactive({
@@ -154,7 +155,6 @@ const state = reactive({
   activeTab: 'orders',
 })
 
-// --- Lifecycle Hook ---
 onBeforeMount(() => {
   // 프로필 정보 로드
   state.user = PROFILE_REPOSITORY.getProfile() || new UserProfile()
@@ -162,17 +162,21 @@ onBeforeMount(() => {
   getOrderList(oneWeekAgo, today)
 })
 
-// --- Methods (Logic) ---
-
-// 1. 데이터 조회 요청
 function getOrderList(start: Date, end: Date) {
+  // 주문 개수
+  ORDER_REPOSITORY.getOrderCount().then((response) => {
+    summary.orders = response.orderCount
+    console.log('앙' + summary.orders)
+  })
+
+  // 주문목록
   ORDER_REPOSITORY.getOrders(start, end).then((orderList) => {
     state.orderList = orderList.map((item) => Object.assign(new OrderProductResponse(), item))
     filteredProductList.value = [...state.orderList]
   })
 }
 
-// 2. 프리셋 버튼 클릭 핸들러
+// 프리셋 버튼 클릭 핸들러
 function filterByPresetRange(type: keyof typeof dateRanges) {
   activePreset.value = type
 
@@ -198,7 +202,7 @@ function filterByPresetRange(type: keyof typeof dateRanges) {
   getOrderList(start, end)
 }
 
-// 3. 수동 조회 버튼 핸들러
+// 수동 조회 버튼 핸들러
 function onSearchByRange() {
   activePreset.value = '' // 프리셋 하이라이트 해제
   if (selectedRange.value) {
@@ -207,7 +211,7 @@ function onSearchByRange() {
   }
 }
 
-// 4. 상품명 포맷팅 (XX 외 N개)
+// 상품명 포맷팅 (XX 외 N개)
 function getOrderName(order: any) {
   if (!order.products || order.products.length === 0) {
     return '상품 정보 없음'
@@ -222,14 +226,14 @@ function getOrderName(order: any) {
   }
 }
 
-// 5. 날짜 포맷팅 (YYYY.MM.DD)
+// 날짜 포맷팅 (YYYY.MM.DD)
 function formatDate(dateStr: string | Date | undefined) {
   if (!dateStr) return ''
   const d = new Date(dateStr)
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
 
-// 6. 상태값 한글 변환
+// 상태값 한글 변환
 function getStatusLabel(status: string) {
   const map: Record<string, string> = {
     'READY': '주문접수',
@@ -240,7 +244,7 @@ function getStatusLabel(status: string) {
   return map[status] || status
 }
 
-// 7. 상태별 태그 컬러
+// 상태별 태그 컬러
 function getStatusType(status: string) {
   const map: Record<string, string> = {
     'READY': 'info',
@@ -251,10 +255,10 @@ function getStatusType(status: string) {
   return map[status] || 'info'
 }
 
-// 8. Navigation
+// Navigation
 function goToProfileEdit() {
-  alert('프로필 수정 페이지 진입')
-  // router.push('/mypage/edit')
+  // alert('프로필 수정 페이지 진입')
+  router.push('/profile/edit')
 }
 
 function goToOrderDetail(orderId: number) {

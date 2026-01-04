@@ -65,7 +65,7 @@ public class UserService {
     }
 
     @Transactional
-    public void update(Long userId, UserPasswordUpdateRequest request) {
+    public void updatePassword(Long userId, UserPasswordUpdateRequest request) {
         User user = getUser(userId);
 
         if (!passwordEncoder.matches(request.getBeforePassword(), user.getPasswordHash())) {
