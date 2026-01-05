@@ -141,7 +141,7 @@ import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import Product from "@/entity/product/Product.ts";
 import Category from "@/entity/product/Category.ts";
 import AddCart from "@/entity/cart/AddCart.ts";
-import UserProfile from "@/entity/user/UserProfile.ts";
+import UserProfile from "@/entity/user/account/UserProfile.ts";
 
 const router = useRouter()
 

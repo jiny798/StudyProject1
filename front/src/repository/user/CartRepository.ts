@@ -1,24 +1,20 @@
 import {inject, singleton} from 'tsyringe'
 import HttpRepository from '@/repository/user/HttpRepository.ts'
-import AddCart from '@/entity/cart/AddCart.ts'
-import Product from "@/entity/product/Product.ts";
-import CartResponse from "@/entity/cart/CartResponse.ts";
+import CouponResponse from "@/entity/coupon/Coupon.ts";
+import MyCoupon from "@/entity/user/coupon/MyCoupon.ts";
 
 @singleton()
-export default class CartRepository {
+export default class CouponRepository {
   constructor(@inject(HttpRepository) private readonly httpRepository: HttpRepository) {
   }
 
-  public write(request: AddCart) {
-    return this.httpRepository.post({
-      path: '/api/cart',
-      body: request,
-    })
+  public getMyCouponList() {
+    return this.httpRepository.getAll<MyCoupon>(
+      {
+        path: `/api/coupons/my`,
+      },
+      MyCoupon,
+    )
   }
-
-  public get() {
-    return this.httpRepository.get<CartResponse>({path: `/api/cart`}, CartResponse)
-  }
-
 
 }

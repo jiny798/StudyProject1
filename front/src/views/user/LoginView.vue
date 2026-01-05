@@ -47,7 +47,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import Login from '@/entity/user/Login'
+import Login from '@/entity/user/account/Login.ts'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import type HttpError from '@/http/HttpError'
 import UserRepository from '@/repository/user/UserRepository.ts'

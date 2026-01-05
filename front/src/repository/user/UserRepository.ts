@@ -1,7 +1,7 @@
 import HttpRepository from '@/repository/user/HttpRepository.ts'
-import type Login from '@/entity/user/Login.ts'
+import type Login from '@/entity/user/account/Login.ts'
 import { inject, singleton } from 'tsyringe'
-import UserProfile from '@/entity/user/UserProfile.ts'
+import UserProfile from '@/entity/user/account/UserProfile.ts'
 import Product from "@/entity/product/Product.ts";
 
 @singleton()

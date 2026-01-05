@@ -50,7 +50,7 @@ import { reactive, ref } from 'vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { container } from 'tsyringe'
-import Signup from '@/entity/user/Signup' // 새로 만든 클래스
+import Signup from '@/entity/user/account/SignUp.ts' // 새로 만든 클래스
 import UserRepository from '@/repository/user/UserRepository.ts'
 import type HttpError from '@/http/HttpError'
 

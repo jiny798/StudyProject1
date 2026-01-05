@@ -116,14 +116,17 @@ import { Search, UserFilled } from '@element-plus/icons-vue' // 아이콘 Import
 
 // Repository & Entity Imports (사용자 환경에 맞게 경로 유지)
 import OrderRepository from '@/repository/user/OrderRepository.ts'
-import UserProfile from '@/entity/user/UserProfile'
+import UserProfile from '@/entity/user/account/UserProfile.ts'
 import ProfileRepository from '@/repository/user/ProfileRepository.ts'
 import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts"
+import CouponRepository from "@/repository/user/CartRepository.ts";
 import router from "@/router";
+import MyCoupon from "@/entity/user/coupon/MyCoupon.ts";
 
 // --- DI Container Resolve ---
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
 const PROFILE_REPOSITORY = container.resolve(ProfileRepository)
+const COUPON_REPOSITORY = container.resolve(CouponRepository)
 
 // --- State & Variables ---
 const today = new Date()
@@ -153,6 +156,7 @@ const state = reactive({
   user: new UserProfile(),
   orderList: [] as OrderProductResponse[],
   activeTab: 'orders',
+  couponList: [] as MyCoupon[]
 })
 
 onBeforeMount(() => {
@@ -160,6 +164,13 @@ onBeforeMount(() => {
   state.user = PROFILE_REPOSITORY.getProfile() || new UserProfile()
   // 초기 데이터 로드 (최근 1주일)
   getOrderList(oneWeekAgo, today)
+
+  COUPON_REPOSITORY.getMyCouponList().then((response) => {
+    state.couponList = response
+    summary.coupons = state.couponList.length
+  })
+
+
 })
 
 function getOrderList(start: Date, end: Date) {

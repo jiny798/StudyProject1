@@ -70,7 +70,7 @@ import {onMounted, reactive, ref} from 'vue'
 import {container} from 'tsyringe'
 import {ElMessage} from 'element-plus'
 
-import User from '@/entity/user/UserProfile.ts'
+import User from '@/entity/user/account/UserProfile.ts'
 import CouponResponse from '@/entity/coupon/Coupon.ts'
 import UserRepository from '@/repository/user/UserRepository.ts'
 import AdminCouponRepository from '@/repository/admin/AdminCouponRepository.ts' // Coupon 리포지토리 필요

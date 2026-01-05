@@ -1,5 +1,5 @@
 import HttpRepository from '@/repository/user/HttpRepository.ts'
-import type Login from '@/entity/user/Login.ts'
+import type Login from '@/entity/user/account/Login.ts'
 import { inject, singleton } from 'tsyringe'
 import type ProductWrite from '@/entity/product/ProductWrite.ts'
 import Product from '@/entity/product/Product.ts'
