@@ -22,7 +22,7 @@ public class AdminOrderService {
 
 
     public PagingResponse<AdminOrderSummaryResponse> getOrderList(RequestPage requestPage) {
-        Page<Order> orderPage = orderRepository.getList(requestPage);
+        Page<Order> orderPage = orderRepository.getList(requestPage, null);
         return new PagingResponse<>(orderPage, AdminOrderSummaryResponse.class);
     }
 

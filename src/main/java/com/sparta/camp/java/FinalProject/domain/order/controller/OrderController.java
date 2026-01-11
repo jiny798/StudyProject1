@@ -5,9 +5,11 @@ import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.Ord
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.response.*;
 import com.sparta.camp.java.FinalProject.domain.order.controller.dto.request.OrderRequest;
 import com.sparta.camp.java.FinalProject.domain.order.service.OrderService;
+import com.sparta.camp.java.FinalProject.domain.product.controller.dto.response.PagingResponse;
 import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +30,9 @@ public class OrderController {
     }
 
     @GetMapping
-    public ApiResponse<List<OrderProductResponse>> getOrders(@AuthenticationPrincipal User user, @ModelAttribute OrderSearchCondition searchCondition) {
+    public ApiResponse<PagingResponse<OrderProductResponse>> getOrders(@AuthenticationPrincipal User user, @ModelAttribute OrderSearchCondition searchCondition) {
         System.out.println("user.getId() " + user.getId());
-        List<OrderProductResponse> response = orderService.getOrderList(user.getId(), searchCondition);
+        PagingResponse<OrderProductResponse> response = orderService.getOrderList(user.getId(), searchCondition);
         return ApiResponse.success(response);
     }
 

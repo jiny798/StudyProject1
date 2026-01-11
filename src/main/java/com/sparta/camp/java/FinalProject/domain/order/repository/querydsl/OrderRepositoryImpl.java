@@ -24,7 +24,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public Page<Order> getList(RequestPage requestPage) {
+    public Page<Order> getList(RequestPage requestPage, Long userId) {
         OrderSearchCondition condition = (requestPage instanceof OrderSearchCondition)
                 ? (OrderSearchCondition) requestPage
                 : new OrderSearchCondition(); // 조건이 없으면 빈 객체로 처리
@@ -33,7 +33,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .where(
                         eqStatus(condition.getStatus()),         // 상태 일치 여부
                         goeStartDate(condition.getStartDate()),  // 시작일 이상 (>=)
-                        loeEndDate(condition.getEndDate())       // 종료일 이하 (<=)
+                        loeEndDate(condition.getEndDate()),       // 종료일 이하 (<=)
+                        eqUser(userId)
                 )
                 .limit(requestPage.getSize())
                 .offset(requestPage.getOffset())
@@ -59,6 +60,11 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .from(order)
                 .where(order.user.id.eq(userId))
                 .fetchOne();
+    }
+
+    // 사용자 조건
+    private BooleanExpression eqUser(Long userId) {
+        return order.user.id.eq(userId);
     }
 
     // 상태 조건

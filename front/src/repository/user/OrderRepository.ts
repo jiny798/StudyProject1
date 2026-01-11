@@ -17,13 +17,13 @@ export default class OrderRepository {
     })
   }
 
-  public getOrders(startDate: Date, endDate: Date) {
+  public getOrders(page: number, startDate: Date, endDate: Date) {
     const start = startDate.toISOString().slice(0, 10) // 'yyyy-MM-dd'
     const end = endDate.toISOString().slice(0, 10)
 
-    return this.httpRepository.getAll<OrderProductResponse>(
+    return this.httpRepository.getList<OrderProductResponse>(
       {
-        path: `/api/orders?startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}`,
+        path: `/api/orders?page=${page}&startDate=${encodeURIComponent(start)}&endDate=${encodeURIComponent(end)}`,
       },
       OrderProductResponse,
     )

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 
 public interface OrderRepositoryCustom {
 
-    Page<Order> getList(RequestPage requestPage);
+    Page<Order> getList(RequestPage requestPage, Long userId);
 
     Long getOrderCount(Long userId);
 }

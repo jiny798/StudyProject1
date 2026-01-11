@@ -17,4 +17,5 @@ public class OrderSearchCondition extends RequestPage {
     private OrderStatus status;
     private String startDate;
     private String endDate;
+    private int page;
 }
