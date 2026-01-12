@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class OrderProductResponse {
     private Long orderId;
@@ -24,8 +23,7 @@ public class OrderProductResponse {
     public OrderProductResponse(Order order) {
         this.orderId = order.getId();
         totalPrice = order.getTotalPrice();
-
-        order.getOrderProducts()
-
+        products = order.getOrderProducts().stream().map(OrderProductResponseDto::new).toList();
+        discountPrice = order.getDiscountedPrice();
     }
 }

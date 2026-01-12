@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div v-if="orderList.length === 0" class="no-data">
+    <div v-if="state.productPage.items.length === 0" class="no-data">
       <el-empty description="조회된 주문 내역이 없습니다."/>
     </div>
 
