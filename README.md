@@ -17,7 +17,7 @@
 
 ## 🛠️ 기술 스택
 
-* **Backend:** Java, Spring Boot
+* **Backend:** Java, Spring Boot 
 * **Database:** (사용하는 데이터베이스를 작성해주세요. 예: MySQL)
 * **ORM:** JPA
 * **기타:** (사용한 다른 기술이 있다면 작성해주세요. 예: Spring Security, Lombok)
