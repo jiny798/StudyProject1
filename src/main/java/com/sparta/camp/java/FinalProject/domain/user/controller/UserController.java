@@ -10,8 +10,6 @@ import com.sparta.camp.java.FinalProject.domain.user.entity.User;
 import com.sparta.camp.java.FinalProject.domain.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +26,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    public ApiResponse<Void> update(@AuthenticationPrincipal User user,
+    public ApiResponse<Void> updatePassword(@AuthenticationPrincipal User user,
                                     @Valid @RequestBody UserPasswordUpdateRequest request) {
         userService.updatePassword(user.getId(), request);
         return ApiResponse.success();

@@ -3,7 +3,7 @@ import HttpError from '@/http/HttpError'
 import { singleton } from 'tsyringe'
 
 export type HttpRequestConfig = {
-  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'
+  method?: 'GET' | 'POST' | 'PATCH' | 'DELETE' | 'PUT'
   path: string
   params?: any
   body?: any

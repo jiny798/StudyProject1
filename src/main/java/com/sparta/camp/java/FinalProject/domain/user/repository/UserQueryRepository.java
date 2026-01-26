@@ -24,10 +24,7 @@ public class UserQueryRepository {
 
     public Page<UserResponse> findUserByUserId(Long userId, String email, Pageable pageable) {
         List<UserResponse> contents = queryFactory.select(new QUserResponse(
-                        user.id,
-                        user.name,
-                        user.email,
-                        order.createdAt
+                        user
                 ))
                 .from(user)
                 .join(order).on(order.user.eq(user))

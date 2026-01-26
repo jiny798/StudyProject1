@@ -1,5 +1,14 @@
 <template>
   <div class="order-history-container">
+
+    <div class="header-section">
+      <h2 class="page-title">주문현황내역</h2>
+      <div class="guide-text">
+        <p>• 기본적으로 최근 3개월간의 자료가 조회되며, 기간 검색 시 지난 주문내역을 조회하실 수 있습니다.</p>
+        <p>• 주문번호를 클릭하시면 해당 주문에 대한 상세내역을 확인하실 수 있습니다.</p>
+      </div>
+    </div>
+
     <div class="filter-container">
       <div class="preset-group">
         <el-button-group>
@@ -34,8 +43,7 @@
     <div class="order-container">
       <div v-for="order in state.productPage.items" :key="order.orderId" class="order-card">
         <div class="order-header">
-          <span class="order-id">주문번호: {{ order.orderId }}</span>
-<!--          <span class="order-date">{{ formatDate(order.orderDate) }}</span>-->
+          <span class="order-id clickable">주문번호: {{ order.orderId }}</span>
         </div>
 
         <div class="product-list">
@@ -88,22 +96,23 @@ import { Search } from '@element-plus/icons-vue'
 import OrderRepository from '@/repository/user/OrderRepository.ts'
 import OrderProductResponse from "@/entity/order/user/OrderProductResponse.ts"
 import Paging from "@/entity/data/Paging.ts";
-import Product from "@/entity/product/Product.ts";
 
 const ORDER_REPOSITORY = container.resolve(OrderRepository)
 
 // 상태 관리
 const orderList = ref<OrderProductResponse[]>([])
-const activePreset = ref('week')
+const activePreset = ref('')
 const currentPage = ref(1)
-const pageSize = ref(10) // 기본 페이지 사이즈 (필요 시 수정)
-const totalCount = ref(0) // 전체 데이터 개수 (페이지네이션 계산용)
+const pageSize = ref(10)
+const totalCount = ref(0)
 
 // 날짜 초기화
 const today = new Date()
-const oneWeekAgo = new Date()
-oneWeekAgo.setDate(today.getDate() - 7)
-const selectedRange = ref<[Date, Date]>([oneWeekAgo, today])
+const threeMonthAgo = new Date()
+threeMonthAgo.setDate(today.getDate() - 90)
+
+// [수정] 타입 오류 방지를 위해 null 허용으로 변경 권장
+const selectedRange = ref<[Date, Date] | [null, null]>([null, null])
 const dateRanges = { week: '1주일', month1: '1개월', month3: '3개월' }
 
 interface State {
@@ -115,34 +124,23 @@ const state = reactive<State>({
 })
 
 onMounted(() => {
-  // 초기 로딩 시 1페이지 요청
-  fetchOrders(1, oneWeekAgo, today)
+  // 초기 로딩 시 1페이지 요청 (안내 문구대로 최근 3개월 조회)
+  fetchOrders(1, threeMonthAgo, today)
 })
 
-/**
- * 주문 내역 조회 함수
- * @param page 페이지 번호
- * @param start 시작일
- * @param end 종료일
- */
 function fetchOrders(page: number, start: Date, end: Date) {
   ORDER_REPOSITORY.getOrders(page, start, end).then((responsePage) => {
     state.productPage = responsePage
-    console.log(state.productPage)
   }).catch(err => {
     console.error("주문 내역 조회 실패", err)
-    orderList.value = []
+    state.productPage.items = []
     totalCount.value = 0
   })
 }
 
-/**
- * 프리셋 버튼 클릭 (1주일, 1개월 등)
- * -> 검색 조건이 변경되므로 1페이지로 초기화
- */
 function filterByPresetRange(type: string) {
   activePreset.value = type
-  currentPage.value = 1 // 페이지 초기화
+  currentPage.value = 1
 
   const end = new Date()
   const start = new Date()
@@ -161,38 +159,29 @@ function filterByPresetRange(type: string) {
       start.setMonth(end.getMonth() - 6)
       break
   }
+  // @ts-ignore
   selectedRange.value = [start, end]
 
-  // 1페이지로 요청
   fetchOrders(1, start, end)
 }
 
-/**
- * 날짜 직접 선택 후 조회 또는 조회 버튼 클릭
- * -> 검색 조건 변경으로 간주하여 1페이지로 초기화
- */
 function onSearchByRange() {
-  if (selectedRange.value) {
-    currentPage.value = 1 // 페이지 초기화
+  if (selectedRange.value && selectedRange.value[0]) {
+    currentPage.value = 1
+    // @ts-ignore
     fetchOrders(1, selectedRange.value[0], selectedRange.value[1])
   }
 }
 
-/**
- * 페이지네이션 페이지 변경 이벤트
- * -> 날짜 조건은 유지하고 페이지만 변경하여 요청
- */
 function handlePageChange(newPage: number) {
-  if (selectedRange.value) {
+  if (selectedRange.value && selectedRange.value[0]) {
+    // @ts-ignore
     fetchOrders(newPage, selectedRange.value[0], selectedRange.value[1])
+  } else {
+    // 날짜 선택이 없는 초기 상태(3개월)에서의 페이징 처리 필요 시 로직 추가
+    // 여기서는 간단히 초기값 재사용
+    fetchOrders(newPage, threeMonthAgo, today)
   }
-}
-
-// ... 포맷팅 함수들 ...
-function formatDate(dateStr: string | Date | undefined) {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
 
 function formatPrice(value: string | number) {
@@ -202,6 +191,29 @@ function formatPrice(value: string | number) {
 </script>
 
 <style scoped>
+/* [추가됨] 헤더 스타일 */
+.header-section {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.guide-text {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.guide-text p {
+  margin: 0;
+}
+
+/* 기존 스타일 유지 */
 .filter-container {
   margin-bottom: 20px;
   display: flex;
@@ -223,6 +235,14 @@ function formatPrice(value: string | number) {
   font-weight: bold;
   margin-bottom: 12px;
   color: #333;
+}
+
+.order-id.clickable {
+  cursor: pointer;
+  color: #409EFF; /* Element Plus Primary Color 느낌 */
+}
+.order-id.clickable:hover {
+  text-decoration: underline;
 }
 
 .product-item {
@@ -259,7 +279,6 @@ function formatPrice(value: string | number) {
   margin-top: 8px;
 }
 
-/* 페이지네이션 스타일 추가 */
 .pagination-container {
   display: flex;
   justify-content: center;

@@ -3,6 +3,8 @@ import type Login from '@/entity/user/account/Login.ts'
 import { inject, singleton } from 'tsyringe'
 import UserProfile from '@/entity/user/account/UserProfile.ts'
 import Product from "@/entity/product/Product.ts";
+import type UpdatePassword from "@/entity/user/account/PasswordUpdate.ts";
+import PasswordUpdate from "@/entity/user/account/PasswordUpdate.ts";
 
 @singleton()
 export default class UserRepository {
@@ -30,6 +32,14 @@ export default class UserRepository {
       UserProfile,
     )
   }
+
+  public updatePassword(request: PasswordUpdate) {
+    return this.httpRepository.put({
+      path: '/api/users/password',
+      body: request,
+    })
+  }
+
 
   public getList(page: number) {
     return this.httpRepository.getList<UserProfile>(

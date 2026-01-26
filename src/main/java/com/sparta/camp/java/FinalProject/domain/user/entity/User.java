@@ -73,5 +73,8 @@ public class User implements Serializable {
         this.phone = phone;
     }
 
+    public void updatePassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
 
 }

@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class  UserResponse {
+public class UserResponse {
 
     Long id;
 
@@ -22,6 +22,7 @@ public class  UserResponse {
 
     LocalDateTime createdAt;
 
+    @QueryProjection
     public UserResponse(User user) {
         this.id = user.getId();
         this.name = user.getName();

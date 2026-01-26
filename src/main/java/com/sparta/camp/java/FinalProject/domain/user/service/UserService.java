@@ -69,13 +69,15 @@ public class UserService {
         User user = getUser(userId);
 
         if (!passwordEncoder.matches(request.getBeforePassword(), user.getPasswordHash())) {
-            new ServiceException(ServiceExceptionCode.SIGNUP_PASSWORD_CONFIRM_FAIL);
+
+            throw new ServiceException(ServiceExceptionCode.SIGNUP_PASSWORD_CONFIRM_FAIL);
         }
 
         if (!request.getPassword().equals(request.getPasswordConfirm())) {
-            new ServiceException(ServiceExceptionCode.SIGNUP_PASSWORD_CONFIRM_FAIL);
-
+            throw new ServiceException(ServiceExceptionCode.SIGNUP_PASSWORD_CONFIRM_FAIL);
         }
+
+        user.updatePassword(passwordEncoder.encode(request.getPassword()));
 
         userRepository.save(user);
     }

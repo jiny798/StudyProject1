@@ -1,17 +1,24 @@
 import type { AxiosError } from 'axios'
 
+interface ErrorResponse {
+  error?: {
+    errorCode?: string;
+    errorMessage?: string;
+  }
+}
+
 export default class HttpError {
-  private readonly code: string
-  private readonly message: string
+  private readonly errorCode: string
+  private readonly errorMessage: string
 
-  constructor(e: AxiosError) {
-    const errorData = e.response?.data as { code?: string; message?: string }
-
-    this.code = errorData?.code ?? '500'
-    this.message = errorData?.message ?? '네트워크 상태가 안좋아잉..'
+  constructor(e: AxiosError<ErrorResponse>) {
+    // const errorData = e.response?.data?.error as { errorCode?: string; errorMessage?: string }
+    const errorData = e.response?.data?.error
+    this.errorCode = errorData?.errorCode ?? '500'
+    this.errorMessage = errorData?.errorMessage ?? '관리자에게 문의하세요'
   }
 
   public getMessage() {
-    return this.message
+    return this.errorMessage
   }
 }

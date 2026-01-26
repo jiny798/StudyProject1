@@ -46,6 +46,16 @@ export default class HttpRepository {
     // .then((response) => plainToInstance(clazz !== null ? clazz : Null, response))
   }
 
+  public async put<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T } | null = null): Promise<T> {
+    return this.httpClient
+      .request({
+        ...config,
+        method: 'PUT',
+      })
+      .then((response) => (clazz ? plainToInstance(clazz, response) : (response as T)))
+    // .then((response) => plainToInstance(clazz !== null ? clazz : Null, response))
+  }
+
   public async delete<T>(config: HttpRequestConfig, clazz: { new (...args: any[]): T } | null = null): Promise<T> {
     return this.httpClient
       .request({ ...config, method: 'DELETE' })
